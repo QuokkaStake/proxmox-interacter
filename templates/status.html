@@ -1,0 +1,7 @@
+<strong>Nodes list</strong>
+{{- if not . }}
+<strong>No nodes present</strong>
+{{- end }}
+{{- range $node := . }}
+- {{ $node.GetEmoji }} {{ $node.Name }}
+{{- end }}
