@@ -6,19 +6,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	configPkg "main/pkg/config"
 	"main/pkg/types"
+	"main/pkg/utils"
 	"net/http"
 
 	"github.com/rs/zerolog"
 )
 
 type Client struct {
-	Config configPkg.ProxmoxConfig
+	Config types.ProxmoxConfig
 	Logger zerolog.Logger
 }
 
-func NewClient(config configPkg.ProxmoxConfig, logger *zerolog.Logger) *Client {
+func NewClient(config types.ProxmoxConfig, logger *zerolog.Logger) *Client {
 	return &Client{
 		Config: config,
 		Logger: logger.With().
@@ -36,7 +36,27 @@ func (c *Client) GetResources() (*types.ProxmoxStatusResponse, error) {
 	var response *types.ProxmoxStatusResponse
 	url := c.RelativeLink("/api2/json/cluster/resources")
 	err := c.QueryAndDecode(url, &response)
+
 	return response, err
+}
+
+func (c *Client) GetNodes() ([]types.NodeWithLink, error) {
+	resources, err := c.GetResources()
+	if err != nil {
+		return []types.NodeWithLink{}, err
+	}
+
+	nodes, err := types.ParseNodesFromResponse(resources)
+	if err != nil {
+		return []types.NodeWithLink{}, err
+	}
+
+	return utils.Map(nodes, func(n types.Node) types.NodeWithLink {
+		return types.NodeWithLink{
+			Node: n,
+			Link: c.Config.GetResourceLink(n.ID, n.Name),
+		}
+	}), nil
 }
 
 /* Query functions */

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"main/pkg/utils"
 	templatesList "main/templates"
 )
 
@@ -25,7 +26,9 @@ func (manager *TemplateManager) GetTemplate(name string) (*template.Template, er
 	filename := fmt.Sprintf("%s.html", name)
 
 	t, err := template.New(filename).
-		Funcs(template.FuncMap{}).
+		Funcs(template.FuncMap{
+			"SerializeLink": utils.SerializeLink,
+		}).
 		ParseFS(templatesList.Templates, filename)
 	if err != nil {
 		return nil, err

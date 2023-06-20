@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	tele "gopkg.in/telebot.v3"
-	"main/pkg/types"
 )
 
 func (a *App) HandleStatus(c tele.Context) error {
@@ -12,20 +11,9 @@ func (a *App) HandleStatus(c tele.Context) error {
 		Str("text", c.Text()).
 		Msg("Got status query")
 
-	resources, err := a.ProxmoxManager.GetResources()
+	nodes, err := a.ProxmoxManager.GetNodes()
 	if err != nil {
 		return a.BotReply(c, "Error fetching nodes status")
-	}
-
-	nodes := make([]types.Node, 0)
-
-	for _, resource := range resources {
-		resourceNodes, err := types.ParseNodesFromResponse(resource)
-		if err != nil {
-			return a.BotReply(c, "Error parsing nodes status")
-		}
-
-		nodes = append(nodes, resourceNodes...)
 	}
 
 	template, err := a.TemplateManager.Render("status", nodes)

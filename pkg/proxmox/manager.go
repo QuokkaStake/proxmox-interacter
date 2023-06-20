@@ -2,7 +2,6 @@ package proxmox
 
 import (
 	"github.com/rs/zerolog"
-	configPkg "main/pkg/config"
 	"main/pkg/types"
 )
 
@@ -11,7 +10,7 @@ type Manager struct {
 	Clients []*Client
 }
 
-func NewManager(config *configPkg.Config, logger *zerolog.Logger) *Manager {
+func NewManager(config *types.Config, logger *zerolog.Logger) *Manager {
 	clients := make([]*Client, len(config.Proxmox))
 
 	for index, proxmoxConfig := range config.Proxmox {
@@ -24,14 +23,14 @@ func NewManager(config *configPkg.Config, logger *zerolog.Logger) *Manager {
 	}
 }
 
-func (m *Manager) GetResources() ([]*types.ProxmoxStatusResponse, error) {
-	responses := make([]*types.ProxmoxStatusResponse, 0)
+func (m *Manager) GetNodes() ([]types.NodeWithLink, error) {
+	responses := make([]types.NodeWithLink, 0)
 
 	for _, client := range m.Clients {
-		if response, err := client.GetResources(); err != nil {
+		if response, err := client.GetNodes(); err != nil {
 			return responses, err
 		} else {
-			responses = append(responses, response)
+			responses = append(responses, response...)
 		}
 	}
 

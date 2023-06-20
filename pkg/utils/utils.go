@@ -1,7 +1,10 @@
 package utils
 
 import (
+	"fmt"
+	"html/template"
 	"main/pkg/logger"
+	"main/pkg/types"
 	"regexp"
 	"strconv"
 	"strings"
@@ -57,4 +60,16 @@ func StrToFloat64(s string) float64 {
 	}
 
 	return f
+}
+
+func SerializeLink(link types.Link) template.HTML {
+	if link.Href == "" {
+		return template.HTML(link.Name)
+	}
+
+	return template.HTML(fmt.Sprintf(
+		"<a href=\"%s\">%s</a>",
+		link.Href,
+		link.Name,
+	))
 }

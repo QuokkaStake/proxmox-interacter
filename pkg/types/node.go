@@ -5,23 +5,8 @@ import (
 	"fmt"
 )
 
-//{
-//"maxmem": 67186339840,
-//"uptime": 1035618,
-//"status": "online",
-//"node": "proxmox-3",
-//"type": "node",
-//"maxcpu": 20,
-//"level": "",
-//"mem": 24002428928,
-//"cpu": 0.0697250418843008,
-//"disk": 23254401024,
-//"cgroup-mode": 2,
-//"id": "node/proxmox-3",
-//"maxdisk": 461916864512
-//},
-
 type Node struct {
+	ID        string `json:"id"`
 	Name      string `json:"node"`
 	Uptime    int64  `json:"uptime"`
 	Status    string `json:"status"`
@@ -65,4 +50,13 @@ func (n Node) GetEmoji() string {
 	}
 
 	return "🔴"
+}
+
+func (n Node) GetLink(config ProxmoxConfig) Link {
+	return config.GetResourceLink(n.ID, n.Name)
+}
+
+type NodeWithLink struct {
+	Node Node
+	Link Link
 }

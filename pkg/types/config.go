@@ -1,8 +1,7 @@
-package config
+package types
 
 import (
 	"fmt"
-	"main/pkg/types"
 	"net/url"
 )
 
@@ -66,13 +65,13 @@ func (c ProxmoxConfig) Validate() error {
 	return nil
 }
 
-func (c ProxmoxConfig) GetNodeLink(node types.Node) types.Link {
-	return types.Link{
-		Name: node.Name,
+func (c ProxmoxConfig) GetResourceLink(id, name string) Link {
+	return Link{
+		Name: name,
 		Href: fmt.Sprintf(
 			"%s/#v1:0:=%s",
 			c.Host(),
-			url.QueryEscape(node.ID),
+			url.QueryEscape(id),
 		),
 	}
 }

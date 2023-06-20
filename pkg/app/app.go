@@ -1,10 +1,10 @@
 package app
 
 import (
-	"main/pkg/config"
 	"main/pkg/logger"
 	"main/pkg/proxmox"
 	"main/pkg/templates"
+	"main/pkg/types"
 	"strings"
 	"time"
 
@@ -16,14 +16,14 @@ import (
 const MaxMessageSize = 4096
 
 type App struct {
-	Config          config.Config
+	Config          types.Config
 	ProxmoxManager  *proxmox.Manager
 	TemplateManager *templates.TemplateManager
 	Logger          *zerolog.Logger
 	Bot             *tele.Bot
 }
 
-func NewApp(config *config.Config) *App {
+func NewApp(config *types.Config) *App {
 	logger := logger.GetLogger(config.Log)
 	templateManager := templates.NewTemplateManager()
 
