@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 //{
 //"maxmem": 17179869184,
 //"name": "neutron-validator",
@@ -22,21 +24,35 @@ package types
 //},
 
 type Container struct {
-	ID        string `json:"id"`
-	Node      string `json:"node"`
-	Type      string `json:"type"`
-	Name      string `json:"name"`
-	Uptime    int64  `json:"uptime"`
-	Status    string `json:"status"`
-	MaxCPU    int64  `json:"maxcpu"`
-	MaxMemory int64  `json:"maxmem"`
-	MaxDisk   int64  `json:"maxdisk"`
+	ID     string `json:"id"`
+	VMID   int64  `json:"vmid"`
+	Node   string `json:"node"`
+	Type   string `json:"type"`
+	Name   string `json:"name"`
+	Uptime int64  `json:"uptime"`
+	Status string `json:"status"`
+
+	MaxCPU    int64 `json:"maxcpu"`
+	MaxMemory int64 `json:"maxmem"`
+	MaxDisk   int64 `json:"maxdisk"`
+
+	NetIn     int64   `json:"netin"`
+	NetOut    int64   `json:"netout"`
+	DiskRead  int64   `json:"diskread"`
+	DiskWrite int64   `json:"diskwrite"`
+	Disk      int64   `json:"disk"`
+	Memory    int64   `json:"mem"`
+	CPU       float64 `json:"cpu"`
 
 	Link Link `json:"-"`
 }
 
 func (c Container) GetID() string   { return c.ID }
 func (c Container) GetName() string { return c.Name }
+
+func (c Container) GetCPUUsage() string {
+	return fmt.Sprintf("%.2f%%", c.CPU*100)
+}
 
 type NodeWithContainers struct {
 	Node       Node
@@ -49,6 +65,26 @@ func (c Container) GetEmoji() string {
 	}
 
 	return "⚪"
+}
+
+func (c Container) IsRunning() bool {
+	return c.Status == "running"
+}
+
+func (c Container) GetTypeEmoji() string {
+	if c.Type == "lxc" {
+		return "📦"
+	}
+
+	return "🖥️"
+}
+
+func (c Container) GetType() string {
+	if c.Type == "lxc" {
+		return "LXC container"
+	}
+
+	return "Virtual machine"
 }
 
 type Node struct {

@@ -5,9 +5,11 @@ import (
 	"html/template"
 	"main/pkg/logger"
 	"main/pkg/types"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func NormalizeString(input string) string {
@@ -23,6 +25,15 @@ func Filter[T any](slice []T, f func(T) bool) []T {
 		}
 	}
 	return n
+}
+
+func Find[T any](slice []T, f func(T) bool) (*T, bool) {
+	for _, e := range slice {
+		if f(e) {
+			return &e, true
+		}
+	}
+	return nil, false
 }
 
 func Map[T, V any](slice []T, f func(T) V) []V {
@@ -72,4 +83,60 @@ func SerializeLink(link types.Link) template.HTML {
 		link.Href,
 		link.Name,
 	))
+}
+
+func FormatSize(size int64) string {
+	sizeFloat := float64(size)
+
+	if size > 1024*1024*1024*1024 {
+		return fmt.Sprintf("%.2f TB", sizeFloat/1024/1024/1024/1024)
+	}
+
+	if size > 1024*1024*1024 {
+		return fmt.Sprintf("%.2f GB", sizeFloat/1024/1024/1024)
+	}
+
+	if size > 1024*1024 {
+		return fmt.Sprintf("%.2f MB", sizeFloat/1024/1024)
+	}
+
+	if size > 1024 {
+		return fmt.Sprintf("%.2f KB", sizeFloat/1024)
+	}
+
+	return fmt.Sprintf("%.2f B", sizeFloat)
+}
+
+func FormatDuration(durationInt int64) string {
+	duration := time.Duration(durationInt * 1_000_000_000)
+
+	days := int64(duration.Hours() / 24)
+	hours := int64(math.Mod(duration.Hours(), 24))
+	minutes := int64(math.Mod(duration.Minutes(), 60))
+	seconds := int64(math.Mod(duration.Seconds(), 60))
+
+	chunks := []struct {
+		singularName string
+		amount       int64
+	}{
+		{"day", days},
+		{"hour", hours},
+		{"minute", minutes},
+		{"second", seconds},
+	}
+
+	parts := []string{}
+
+	for _, chunk := range chunks {
+		switch chunk.amount {
+		case 0:
+			continue
+		case 1:
+			parts = append(parts, fmt.Sprintf("%d %s", chunk.amount, chunk.singularName))
+		default:
+			parts = append(parts, fmt.Sprintf("%d %ss", chunk.amount, chunk.singularName))
+		}
+	}
+
+	return strings.Join(parts, " ")
 }

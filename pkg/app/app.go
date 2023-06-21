@@ -56,6 +56,7 @@ func NewApp(config *types.Config) *App {
 func (a *App) Start() {
 	a.Bot.Handle("/status", a.HandleStatus)
 	a.Bot.Handle("/containers", a.HandleListContainers)
+	a.Bot.Handle("/container", a.HandleContainerInfo)
 
 	a.Logger.Info().Msg("Telegram bot listening")
 
