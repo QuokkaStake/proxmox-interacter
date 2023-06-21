@@ -65,13 +65,13 @@ func (c ProxmoxConfig) Validate() error {
 	return nil
 }
 
-func (c ProxmoxConfig) GetResourceLink(id, name string) Link {
+func (c ProxmoxConfig) GetResourceLink(resource Resource) Link {
 	return Link{
-		Name: name,
+		Name: resource.GetName(),
 		Href: fmt.Sprintf(
 			"%s/#v1:0:=%s",
 			c.Host(),
-			url.QueryEscape(id),
+			url.QueryEscape(resource.GetID()),
 		),
 	}
 }

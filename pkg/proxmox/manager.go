@@ -23,11 +23,39 @@ func NewManager(config *types.Config, logger *zerolog.Logger) *Manager {
 	}
 }
 
-func (m *Manager) GetNodes() ([]types.NodeWithLink, error) {
-	responses := make([]types.NodeWithLink, 0)
+func (m *Manager) GetNodes() ([]types.Node, error) {
+	responses := make([]types.Node, 0)
 
 	for _, client := range m.Clients {
 		if response, err := client.GetNodes(); err != nil {
+			return responses, err
+		} else {
+			responses = append(responses, response...)
+		}
+	}
+
+	return responses, nil
+}
+
+func (m *Manager) GetContainers() ([]types.Container, error) {
+	responses := make([]types.Container, 0)
+
+	for _, client := range m.Clients {
+		if response, err := client.GetContainers(); err != nil {
+			return responses, err
+		} else {
+			responses = append(responses, response...)
+		}
+	}
+
+	return responses, nil
+}
+
+func (m *Manager) GetNodesWithContainers() ([]types.NodeWithContainers, error) {
+	responses := make([]types.NodeWithContainers, 0)
+
+	for _, client := range m.Clients {
+		if response, err := client.GetNodesWithContainers(); err != nil {
 			return responses, err
 		} else {
 			responses = append(responses, response...)

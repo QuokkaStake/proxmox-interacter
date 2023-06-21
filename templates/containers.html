@@ -1,0 +1,10 @@
+<strong>Containers/VMs list</strong>
+{{- if not . }}
+<strong>No containers/VMs present</strong>
+{{- end }}
+{{- range $node := . }}
+{{ SerializeLink $node.Node.Link }}:
+{{- range $container := $node.Containers }}
+- {{ $container.GetEmoji }} {{ SerializeLink $container.Link }}
+{{- end }}
+{{ end }}

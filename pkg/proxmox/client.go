@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"main/pkg/types"
-	"main/pkg/utils"
 	"net/http"
 
 	"github.com/rs/zerolog"
@@ -40,23 +39,46 @@ func (c *Client) GetResources() (*types.ProxmoxStatusResponse, error) {
 	return response, err
 }
 
-func (c *Client) GetNodes() ([]types.NodeWithLink, error) {
+func (c *Client) GetNodes() ([]types.Node, error) {
 	resources, err := c.GetResources()
 	if err != nil {
-		return []types.NodeWithLink{}, err
+		return []types.Node{}, err
 	}
 
-	nodes, err := types.ParseNodesFromResponse(resources)
+	nodes, err := c.ParseNodesFromResponse(resources)
 	if err != nil {
-		return []types.NodeWithLink{}, err
+		return []types.Node{}, err
 	}
 
-	return utils.Map(nodes, func(n types.Node) types.NodeWithLink {
-		return types.NodeWithLink{
-			Node: n,
-			Link: c.Config.GetResourceLink(n.ID, n.Name),
-		}
-	}), nil
+	return nodes, nil
+}
+
+func (c *Client) GetContainers() ([]types.Container, error) {
+	resources, err := c.GetResources()
+	if err != nil {
+		return []types.Container{}, err
+	}
+
+	containers, err := c.ParseContainersFromResponse(resources)
+	if err != nil {
+		return []types.Container{}, err
+	}
+
+	return containers, nil
+}
+
+func (c *Client) GetNodesWithContainers() ([]types.NodeWithContainers, error) {
+	resources, err := c.GetResources()
+	if err != nil {
+		return nil, err
+	}
+
+	nodesWithContainers, err := c.ParseNodesWithContainersFromResponse(resources)
+	if err != nil {
+		return nil, err
+	}
+
+	return nodesWithContainers, nil
 }
 
 /* Query functions */

@@ -3,5 +3,5 @@
 <strong>No nodes present</strong>
 {{- end }}
 {{- range $node := . }}
-- {{ $node.Node.GetEmoji }} {{ SerializeLink $node.Link }}
+- {{ $node.GetEmoji }} {{ SerializeLink $node.Link }}
 {{- end }}
