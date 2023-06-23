@@ -1,0 +1,15 @@
+<strong>Node info</strong>
+
+<strong>Name: </strong> {{ SerializeLink .Link }}
+<strong>Status: </strong> {{ .GetEmoji }} {{ .Status }}
+
+<strong>Max CPU</strong>: {{ .MaxCPU }}
+<strong>Max RAM</strong>: {{ FormatSize .MaxMemory }}
+<strong>Max disk</strong>: {{ FormatSize .MaxDisk }}
+
+{{ if .IsRunning }}
+<strong>Uptime</strong>: {{ FormatDuration .Uptime }}
+<strong>CPU usage</strong>: {{ .GetCPUUsage }}
+<strong>RAM usage</strong>: {{ FormatSize .Memory }}
+<strong>Disk usage</strong>: {{ FormatSize .Disk }}
+{{ end }}

@@ -81,6 +81,39 @@ func (c *Client) GetNodesWithContainers() ([]types.NodeWithContainers, error) {
 	return nodesWithContainers, nil
 }
 
+func (c *Client) StartContainer(container types.Container) (*types.ProxmoxActionResponse, error) {
+	return c.ContainerAction(container, "start")
+}
+
+func (c *Client) StopContainer(container types.Container) (*types.ProxmoxActionResponse, error) {
+	return c.ContainerAction(container, "stop")
+}
+
+func (c *Client) RebootContainer(container types.Container) (*types.ProxmoxActionResponse, error) {
+	return c.ContainerAction(container, "reboot")
+}
+
+func (c *Client) ContainerAction(container types.Container, action string) (*types.ProxmoxActionResponse, error) {
+	var response *types.ProxmoxActionResponse
+	url := c.RelativeLink(fmt.Sprintf(
+		"/api2/extjs/nodes/%s/%s/status/%s",
+		container.Node,
+		container.ID,
+		action,
+	))
+	err := c.QueryAndDecodePost(url, nil, &response)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Success != 1 {
+		return nil, fmt.Errorf(response.Message)
+	}
+
+	return response, err
+}
+
 /* Query functions */
 
 func (c *Client) Query(url string) (io.ReadCloser, error) {
@@ -113,6 +146,7 @@ func (c *Client) QueryAndDecodePost(url string, postBody interface{}, output int
 	}
 
 	defer body.Close()
+
 	return json.NewDecoder(body).Decode(&output)
 }
 
@@ -142,7 +176,6 @@ func (c *Client) DoQuery(method string, url string, body interface{}) (io.ReadCl
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("PVEAPIToken=%s=%s", c.Config.User, c.Config.Token))
 
 	c.Logger.Trace().

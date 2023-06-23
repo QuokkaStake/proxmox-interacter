@@ -57,6 +57,10 @@ func (a *App) Start() {
 	a.Bot.Handle("/status", a.HandleStatus)
 	a.Bot.Handle("/containers", a.HandleListContainers)
 	a.Bot.Handle("/container", a.HandleContainerInfo)
+	a.Bot.Handle("/node", a.HandleNodeInfo)
+	a.Bot.Handle("/start", a.HandleStartContainer)
+	a.Bot.Handle("/stop", a.HandleStopContainer)
+	a.Bot.Handle("/restart", a.HandleRestartContainer)
 
 	a.Logger.Info().Msg("Telegram bot listening")
 

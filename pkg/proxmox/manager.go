@@ -1,8 +1,10 @@
 package proxmox
 
 import (
+	"fmt"
 	"github.com/rs/zerolog"
 	"main/pkg/types"
+	"main/pkg/utils"
 )
 
 type Manager struct {
@@ -63,4 +65,79 @@ func (m *Manager) GetNodesWithContainers() ([]types.NodeWithContainers, error) {
 	}
 
 	return responses, nil
+}
+
+func (m *Manager) FindNodeWithClient(containerName string) (*types.Container, *Client, error) {
+	for _, client := range m.Clients {
+		containers, err := client.GetContainers()
+		if err != nil {
+			return nil, nil, err
+		}
+
+		container, found := utils.Find(containers, func(c types.Container) bool {
+			return c.ID == containerName ||
+				fmt.Sprintf("%d", c.VMID) == containerName ||
+				c.Name == containerName
+		})
+
+		if found {
+			return container, client, nil
+		}
+	}
+
+	return nil, nil, fmt.Errorf("Container is not found")
+}
+
+func (m *Manager) StartContainer(containerName string) (*types.Container, error) {
+	container, client, err := m.FindNodeWithClient(containerName)
+	if err != nil {
+		return container, err
+	}
+
+	if container.IsRunning() {
+		return container, fmt.Errorf("Container is already running!")
+	}
+
+	_, err = client.StartContainer(*container)
+	if err != nil {
+		return container, err
+	}
+
+	return container, nil
+}
+
+func (m *Manager) StopContainer(containerName string) (*types.Container, error) {
+	container, client, err := m.FindNodeWithClient(containerName)
+	if err != nil {
+		return container, err
+	}
+
+	if !container.IsRunning() {
+		return container, fmt.Errorf("Container is not running!")
+	}
+
+	_, err = client.StopContainer(*container)
+	if err != nil {
+		return container, err
+	}
+
+	return container, nil
+}
+
+func (m *Manager) RestartContainer(containerName string) (*types.Container, error) {
+	container, client, err := m.FindNodeWithClient(containerName)
+	if err != nil {
+		return container, err
+	}
+
+	if !container.IsRunning() {
+		return container, fmt.Errorf("Container is not running!")
+	}
+
+	_, err = client.RebootContainer(*container)
+	if err != nil {
+		return container, err
+	}
+
+	return container, nil
 }

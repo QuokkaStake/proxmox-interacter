@@ -86,7 +86,7 @@ func (c *Client) ParseNodesWithContainersFromResponse(response *types.ProxmoxSta
 		result[index] = types.NodeWithContainers{
 			Node: node,
 			Containers: utils.Filter(containers, func(c types.Container) bool {
-				return c.Node == node.Name
+				return c.Node == node.Node
 			}),
 		}
 	}
