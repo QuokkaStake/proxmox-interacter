@@ -102,7 +102,6 @@ func (c *Client) ContainerAction(container types.Container, action string) (*typ
 		action,
 	))
 	err := c.QueryAndDecodePost(url, nil, &response)
-
 	if err != nil {
 		return nil, err
 	}

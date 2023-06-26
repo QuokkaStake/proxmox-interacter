@@ -2,21 +2,21 @@ package types
 
 import "fmt"
 
-//{
-//"maxmem": 67186364416,
-//"id": "node/proxmox-1",
-//"cpu": 0.0238454898575744,
-//"type": "node",
-//"node": "proxmox-1",
-//"status": "online",
-//"mem": 24367136768,
-//"level": "",
-//"maxdisk": 461901004800,
-//"disk": 8873836544,
-//"uptime": 1153492,
-//"maxcpu": 20,
-//"cgroup-mode": 2
-//},
+// {
+//	"maxmem": 67186364416,
+//	"id": "node/proxmox-1",
+//	"cpu": 0.0238454898575744,
+//	"type": "node",
+//	"node": "proxmox-1",
+//	"status": "online",
+//	"mem": 24367136768,
+//	"level": "",
+//	"maxdisk": 461901004800,
+//	"disk": 8873836544,
+//	"uptime": 1153492,
+//	"maxcpu": 20,
+//	"cgroup-mode": 2
+// },
 
 type Node struct {
 	ID     string `json:"id"`

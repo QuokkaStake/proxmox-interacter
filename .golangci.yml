@@ -45,3 +45,4 @@ linters:
     - exhaustruct
     - gci
     - depguard
+    - musttag

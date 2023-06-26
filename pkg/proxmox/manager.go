@@ -2,9 +2,10 @@ package proxmox
 
 import (
 	"fmt"
-	"github.com/rs/zerolog"
 	"main/pkg/types"
 	"main/pkg/utils"
+
+	"github.com/rs/zerolog"
 )
 
 type Manager struct {
