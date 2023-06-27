@@ -61,6 +61,7 @@ func (a *App) Start() {
 	a.Bot.Handle("/start", a.HandleStartContainer)
 	a.Bot.Handle("/stop", a.HandleStopContainer)
 	a.Bot.Handle("/restart", a.HandleRestartContainer)
+	a.Bot.Handle("/disks", a.HandleListDisks)
 
 	a.Logger.Info().Msg("Telegram bot listening")
 

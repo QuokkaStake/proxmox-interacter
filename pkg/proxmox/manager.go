@@ -142,3 +142,17 @@ func (m *Manager) RestartContainer(containerName string) (*types.Container, erro
 
 	return container, nil
 }
+
+func (m *Manager) GetNodesWithStorages() ([]types.NodeWithStorages, error) {
+	responses := make([]types.NodeWithStorages, 0)
+
+	for _, client := range m.Clients {
+		if response, err := client.GetNodesWithStorages(); err != nil {
+			return responses, err
+		} else {
+			responses = append(responses, response...)
+		}
+	}
+
+	return responses, nil
+}

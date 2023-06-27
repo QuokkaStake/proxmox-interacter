@@ -46,3 +46,4 @@ linters:
     - gci
     - depguard
     - musttag
+    - goconst

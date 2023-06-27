@@ -1,0 +1,10 @@
+<strong>Storages list</strong>
+{{- if not . }}
+<strong>No storages present</strong>
+{{- end }}
+{{- range $node := . }}
+{{ SerializeLink $node.Node.Link }}:
+{{- range $storage := $node.Storages }}
+- {{ $storage.GetEmoji }} {{ SerializeLink $storage.Link }}, {{ $storage.PluginType }} ({{ FormatSize $storage.MaxDisk }} total, {{ FormatSize $storage.Disk }} used)
+{{- end }}
+{{ end }}

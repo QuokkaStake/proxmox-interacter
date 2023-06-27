@@ -9,6 +9,11 @@ type NodeWithContainers struct {
 	Containers []Container
 }
 
+type NodeWithStorages struct {
+	Node     Node
+	Storages []Storage
+}
+
 type ProxmoxActionResponse struct {
 	Success int    `json:"success"`
 	Message string `json:"message"`
