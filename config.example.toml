@@ -1,0 +1,35 @@
+# Logging configuration
+[log]
+# Log level. Defaults to "info". Set it to "debug" or "trace" to add more verbosity and for debugging.
+level = "trace"
+# Whether to write all logs in JSON instead of pretty-printing. Useful if you use a centralised logging
+# solution, like ELK. Defaults to false.
+json = false
+
+# Telegram configuration
+[telegram]
+# Telegram bot token
+token = "aaa:bbb"
+# IDs of the users who are able to use this bot.
+# It is strongly recommended to set it, otherwise anyone can manage your Proxmox instances by messaging a bot.
+admins = [1, 2]
+
+# Proxmox configuration.
+[[proxmox]]
+# URL of Proxmox to query. Defaults to "http://localhost:8006" (would work if you are
+# running your bot on the same server as Proxmox itself).
+url = "http://localhost:8006"
+# External Proxmox URL. Used to generate links to your Proxmox resources.
+# Useful if you have your Proxmox behind a reverse proxy or NAT.
+# Optional, if omitted, "url" would be used everywhere.
+external-url = "http://fancy-domain:8006"
+# Proxmox user and token to do queries on behalf of. See README.md for more info.
+user = "root@pam"
+token = "token"
+
+# There can be multiple Proxmox configs, each per one node.
+[[proxmox]]
+url = "http://192.168.1.1:8006"
+external-url = "http://fancy-domain-2:8006"
+user = "root@pam"
+token = "token"

@@ -1,4 +1,4 @@
-config.yml
+config.toml
 main
 .idea
 dist/

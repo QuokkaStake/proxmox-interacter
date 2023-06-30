@@ -23,10 +23,6 @@ type TelegramConfig struct {
 }
 
 func (c TelegramConfig) Validate() error {
-	if c.Chat == 0 {
-		return fmt.Errorf("telegram chat not specified")
-	}
-
 	if c.Token == "" {
 		return fmt.Errorf("telegram token not specified")
 	}
