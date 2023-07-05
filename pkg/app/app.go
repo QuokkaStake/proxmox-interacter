@@ -1,7 +1,7 @@
 package app
 
 import (
-	"main/pkg/logger"
+	loggerPkg "main/pkg/logger"
 	"main/pkg/proxmox"
 	"main/pkg/templates"
 	"main/pkg/types"
@@ -24,7 +24,7 @@ type App struct {
 }
 
 func NewApp(config *types.Config) *App {
-	logger := logger.GetLogger(config.Log)
+	logger := loggerPkg.GetLogger(config.Log)
 	templateManager := templates.NewTemplateManager()
 
 	bot, err := tele.NewBot(tele.Settings{
@@ -62,6 +62,7 @@ func (a *App) Start() {
 	a.Bot.Handle("/stop", a.HandleStopContainer)
 	a.Bot.Handle("/restart", a.HandleRestartContainer)
 	a.Bot.Handle("/disks", a.HandleListDisks)
+	a.Bot.Handle("/help", a.HandleStartContainer)
 
 	a.Logger.Info().Msg("Telegram bot listening")
 

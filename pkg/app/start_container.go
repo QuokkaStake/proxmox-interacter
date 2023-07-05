@@ -7,6 +7,10 @@ import (
 )
 
 func (a *App) HandleStartContainer(c tele.Context) error {
+	if len(strings.Split(c.Text(), " ")) == 1 {
+		return a.HandleHelp(c)
+	}
+
 	a.Logger.Info().
 		Str("sender", c.Sender().Username).
 		Str("text", c.Text()).
