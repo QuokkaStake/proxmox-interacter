@@ -21,9 +21,10 @@ type App struct {
 	TemplateManager *templates.TemplateManager
 	Logger          *zerolog.Logger
 	Bot             *tele.Bot
+	Version         string
 }
 
-func NewApp(config *types.Config) *App {
+func NewApp(config *types.Config, version string) *App {
 	logger := loggerPkg.GetLogger(config.Log)
 	templateManager := templates.NewTemplateManager()
 
@@ -50,6 +51,7 @@ func NewApp(config *types.Config) *App {
 		ProxmoxManager:  proxmoxManager,
 		TemplateManager: templateManager,
 		Bot:             bot,
+		Version:         version,
 	}
 }
 

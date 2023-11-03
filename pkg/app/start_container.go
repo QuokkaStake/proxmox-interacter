@@ -2,8 +2,9 @@ package app
 
 import (
 	"fmt"
-	tele "gopkg.in/telebot.v3"
 	"strings"
+
+	tele "gopkg.in/telebot.v3"
 )
 
 func (a *App) HandleStartContainer(c tele.Context) error {

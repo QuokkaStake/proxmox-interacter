@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"main/pkg/types"
 	"main/pkg/utils"
+	"strconv"
 	"strings"
 
 	tele "gopkg.in/telebot.v3"
@@ -29,7 +30,7 @@ func (a *App) HandleContainerInfo(c tele.Context) error {
 
 	container, found := utils.Find(containers, func(container types.Container) bool {
 		// containers IDs are like lxc/XXXX or qemu/XXXX
-		return fmt.Sprintf("%d", container.VMID) == args[0] ||
+		return strconv.FormatInt(container.VMID, 10) == args[0] ||
 			container.ID == args[0] ||
 			container.Name == args[0]
 	})

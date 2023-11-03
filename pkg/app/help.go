@@ -12,7 +12,7 @@ func (a *App) HandleHelp(c tele.Context) error {
 		Str("text", c.Text()).
 		Msg("Got help query")
 
-	template, err := a.TemplateManager.Render("help", nil)
+	template, err := a.TemplateManager.Render("help", a.Version)
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("Error rendering help template")
 		return c.Reply(fmt.Sprintf("Error rendering template: %s", err))

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"main/pkg/types"
 	"main/pkg/utils"
+	"strconv"
 
 	"github.com/rs/zerolog"
 )
@@ -77,7 +78,7 @@ func (m *Manager) FindNodeWithClient(containerName string) (*types.Container, *C
 
 		container, found := utils.Find(containers, func(c types.Container) bool {
 			return c.ID == containerName ||
-				fmt.Sprintf("%d", c.VMID) == containerName ||
+				strconv.FormatInt(c.VMID, 10) == containerName ||
 				c.Name == containerName
 		})
 

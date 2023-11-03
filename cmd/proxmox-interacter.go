@@ -16,7 +16,7 @@ func Execute(configPath string) {
 	}
 
 	config := pkg.LoadConfig(configPath)
-	newApp := app.NewApp(config)
+	newApp := app.NewApp(config, version)
 	newApp.Start()
 }
 
