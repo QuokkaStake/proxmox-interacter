@@ -5,6 +5,7 @@ import (
 	"main/pkg/types"
 	"main/pkg/utils"
 	"strconv"
+	"sync"
 
 	"github.com/rs/zerolog"
 )
@@ -27,16 +28,33 @@ func NewManager(config *types.Config, logger *zerolog.Logger) *Manager {
 	}
 }
 
-func (m *Manager) GetNodes() ([]types.Node, error) {
-	responses := make([]types.Node, 0)
+func (m *Manager) GetNodes() ([]types.ClusterInfo, error) {
+	responses := make([]types.ClusterInfo, len(m.Clients))
 
-	for _, client := range m.Clients {
-		if response, err := client.GetNodes(); err != nil {
-			return responses, err
-		} else {
-			responses = append(responses, response...)
-		}
+	var mutex sync.Mutex
+	var wg sync.WaitGroup
+
+	for index, client := range m.Clients {
+		wg.Add(1)
+		go func(index int, client *Client) {
+			defer wg.Done()
+
+			response, err := client.GetNodes()
+			clusterWithError := types.ClusterInfo{Name: client.Config.Name}
+
+			if err != nil {
+				clusterWithError.Error = err
+			} else {
+				clusterWithError.Nodes = response
+			}
+
+			mutex.Lock()
+			responses[index] = clusterWithError
+			mutex.Unlock()
+		}(index, client)
 	}
+
+	wg.Wait()
 
 	return responses, nil
 }

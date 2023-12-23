@@ -2,8 +2,6 @@ package app
 
 import (
 	"fmt"
-	"main/pkg/types"
-	"main/pkg/utils"
 	"strings"
 
 	tele "gopkg.in/telebot.v3"
@@ -22,24 +20,28 @@ func (a *App) HandleNodeInfo(c tele.Context) error {
 		return c.Reply(fmt.Sprintf("Usage: %s <node name>", command))
 	}
 
-	nodes, err := a.ProxmoxManager.GetNodes()
+	clusters, err := a.ProxmoxManager.GetNodes()
 	if err != nil {
 		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	node, found := utils.Find(nodes, func(node types.Node) bool {
-		return node.Node == args[0] || node.ID == args[0]
-	})
+	for _, cluster := range clusters {
+		if cluster.Error != nil {
+			continue
+		}
 
-	if !found {
-		return a.BotReply(c, "Node is not found")
+		for _, node := range cluster.Nodes {
+			if node.Node == args[0] || node.ID == args[0] {
+				template, err := a.TemplateManager.Render("node", node)
+				if err != nil {
+					a.Logger.Error().Err(err).Msg("Error rendering node template")
+					return c.Reply(fmt.Sprintf("Error rendering template: %s", err))
+				}
+
+				return a.BotReply(c, template)
+			}
+		}
 	}
 
-	template, err := a.TemplateManager.Render("node", node)
-	if err != nil {
-		a.Logger.Error().Err(err).Msg("Error rendering node template")
-		return c.Reply(fmt.Sprintf("Error rendering template: %s", err))
-	}
-
-	return a.BotReply(c, template)
+	return a.BotReply(c, "Node is not found")
 }

@@ -1,7 +1,12 @@
 <strong>Nodes list</strong>
-{{- if not . }}
-<strong>No nodes present</strong>
+{{ range $cluster := . }}
+<strong>Cluster {{ $cluster.Name }}</strong>
+{{- if $cluster.Error }}
+Got error: {{ $cluster.Error }}
+{{- else if not .Nodes }}
+No nodes present
 {{- end }}
-{{- range $node := . }}
+{{- range $node := $cluster.Nodes }}
 - {{ $node.GetEmoji }} {{ SerializeLink $node.Link }}
 {{- end }}
+{{ end -}}

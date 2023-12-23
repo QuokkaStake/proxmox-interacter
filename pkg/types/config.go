@@ -31,6 +31,7 @@ func (c TelegramConfig) Validate() error {
 }
 
 type ProxmoxConfig struct {
+	Name        string `toml:"name"`
 	URL         string `default:"http://localhost:8006" toml:"url"`
 	ExternalURL string `toml:"external-url"`
 	User        string `toml:"user"`
@@ -46,6 +47,10 @@ func (c ProxmoxConfig) Host() string {
 }
 
 func (c ProxmoxConfig) Validate() error {
+	if c.Name == "" {
+		return fmt.Errorf("proxmox node name not specified")
+	}
+
 	if c.URL == "" {
 		return fmt.Errorf("proxmox url not specified")
 	}
