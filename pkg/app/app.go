@@ -66,12 +66,35 @@ func (a *App) Start() {
 	a.Bot.Handle("/disks", a.HandleListDisks)
 	a.Bot.Handle("/help", a.HandleStartContainer)
 
+	a.Bot.Handle(tele.OnCallback, a.HandleCallback)
+
 	a.Logger.Info().Msg("Telegram bot listening")
 
 	a.Bot.Start()
 }
 
-func (a *App) BotReply(c tele.Context, msg string) error {
+func (a *App) HandleCallback(c tele.Context) error {
+	callback := c.Callback()
+
+	callbacks := map[string]func(tele.Context, string) error{
+		CallbackPrefixRestart:       a.HandleDoRestartContainer,
+		CallbackPrefixCancelRestart: a.HandleDoCancelRestartContainer,
+	}
+
+	unique := strings.TrimSpace(callback.Data)
+
+	for prefix, botCallback := range callbacks {
+		if strings.HasPrefix(unique, prefix) {
+			suffix, _ := strings.CutPrefix(unique, prefix)
+
+			return botCallback(c, suffix)
+		}
+	}
+
+	return nil
+}
+
+func (a *App) BotReply(c tele.Context, msg string, opts ...interface{}) error {
 	msgsByNewline := strings.Split(msg, "\n")
 
 	var sb strings.Builder
@@ -89,7 +112,9 @@ func (a *App) BotReply(c tele.Context, msg string) error {
 		sb.WriteString(line + "\n")
 	}
 
-	if err := c.Reply(sb.String(), tele.ModeHTML); err != nil {
+	opts = append(opts, tele.ModeHTML)
+
+	if err := c.Reply(sb.String(), opts...); err != nil {
 		a.Logger.Error().Err(err).Msg("Could not send Telegram message")
 		return err
 	}
