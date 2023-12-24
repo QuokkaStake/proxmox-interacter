@@ -47,3 +47,4 @@ linters:
     - depguard
     - musttag
     - goconst
+    - gofumpt
