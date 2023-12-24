@@ -12,12 +12,12 @@ func (a *App) HandleListDisks(c tele.Context) error {
 		Str("text", c.Text()).
 		Msg("Got list disks query")
 
-	storages, err := a.ProxmoxManager.GetNodesWithStorages()
+	clusters, err := a.ProxmoxManager.GetNodes()
 	if err != nil {
-		return a.BotReply(c, "Error fetching storages")
+		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	template, err := a.TemplateManager.Render("storages", storages)
+	template, err := a.TemplateManager.Render("storages", clusters)
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("Error rendering storages template")
 		return c.Reply(fmt.Sprintf("Error rendering template: %s", err))

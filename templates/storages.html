@@ -1,10 +1,16 @@
 <strong>Storages list</strong>
-{{- if not . }}
-<strong>No storages present</strong>
+
+{{ range $cluster := . -}}
+<strong>Cluster {{ $cluster.Name }}</strong>
+{{- if $cluster.Error }}
+Got error: {{ $cluster.Error }}
+{{- else if not .Nodes }}
+No nodes present
 {{- end }}
-{{- range $node := . }}
+{{- range $node := $cluster.Nodes }}
 {{ SerializeLink $node.Node.Link }}:
 {{- range $storage := $node.Storages }}
 - {{ $storage.GetEmoji }} {{ SerializeLink $storage.Link }}, {{ $storage.PluginType }} ({{ FormatSize $storage.MaxDisk }} total, {{ FormatSize $storage.Disk }} used)
 {{- end }}
+{{ end }}
 {{ end }}

@@ -93,20 +93,6 @@ func (c *Client) RebootContainer(container types.Container) (*types.ProxmoxActio
 	return c.ContainerAction(container, "reboot")
 }
 
-func (c *Client) GetNodesWithStorages() ([]types.NodeWithStorages, error) {
-	resources, err := c.GetResources()
-	if err != nil {
-		return nil, err
-	}
-
-	nodesWithContainers, err := c.ParseNodesWithStoragesFromResponse(resources)
-	if err != nil {
-		return nil, err
-	}
-
-	return nodesWithContainers, nil
-}
-
 func (c *Client) ContainerAction(container types.Container, action string) (*types.ProxmoxActionResponse, error) {
 	var response *types.ProxmoxActionResponse
 	url := c.RelativeLink(fmt.Sprintf(

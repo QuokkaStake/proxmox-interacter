@@ -10,11 +10,6 @@ type NodeWithAssets struct {
 	Storages   []Storage
 }
 
-type NodeWithStorages struct {
-	Node     Node
-	Storages []Storage
-}
-
 type ProxmoxActionResponse struct {
 	Success int    `json:"success"`
 	Message string `json:"message"`
