@@ -2,9 +2,6 @@ package app
 
 import (
 	"fmt"
-	"main/pkg/types"
-	"main/pkg/utils"
-	"strconv"
 	"strings"
 
 	tele "gopkg.in/telebot.v3"
@@ -23,18 +20,12 @@ func (a *App) HandleContainerInfo(c tele.Context) error {
 		return c.Reply(fmt.Sprintf("Usage: %s <container name or ID>", command))
 	}
 
-	containers, err := a.ProxmoxManager.GetContainers()
+	clusters, err := a.ProxmoxManager.GetNodes()
 	if err != nil {
-		return a.BotReply(c, fmt.Sprintf("Error fetching containers: %s", err))
+		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	container, found := utils.Find(containers, func(container types.Container) bool {
-		// containers IDs are like lxc/XXXX or qemu/XXXX
-		return strconv.FormatInt(container.VMID, 10) == args[0] ||
-			container.ID == args[0] ||
-			container.Name == args[0]
-	})
-
+	container, found := clusters.FindContainer(args[0])
 	if !found {
 		return a.BotReply(c, "Container is not found")
 	}
