@@ -31,7 +31,7 @@ func (a *App) HandleNodeInfo(c tele.Context) error {
 		}
 
 		for _, node := range cluster.Nodes {
-			if node.Node == args[0] || node.ID == args[0] {
+			if node.Node.Node == args[0] || node.Node.ID == args[0] {
 				template, err := a.TemplateManager.Render("node", node)
 				if err != nil {
 					a.Logger.Error().Err(err).Msg("Error rendering node template")

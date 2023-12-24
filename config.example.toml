@@ -16,6 +16,8 @@ admins = [1, 2]
 
 # Proxmox configuration.
 [[proxmox]]
+# Name of the node/cluster. Required
+name = "proxmox-cluster"
 # URL of Proxmox to query. Defaults to "http://localhost:8006" (would work if you are
 # running your bot on the same server as Proxmox itself).
 url = "http://localhost:8006"

@@ -39,6 +39,20 @@ func (c *Client) GetResources() (*types.ProxmoxStatusResponse, error) {
 	return response, err
 }
 
+func (c *Client) GetNodesWithAssets() ([]types.NodeWithAssets, error) {
+	resources, err := c.GetResources()
+	if err != nil {
+		return []types.NodeWithAssets{}, err
+	}
+
+	nodes, err := c.ParseNodesWithAssetsFromResponse(resources)
+	if err != nil {
+		return []types.NodeWithAssets{}, err
+	}
+
+	return nodes, nil
+}
+
 func (c *Client) GetNodes() ([]types.Node, error) {
 	resources, err := c.GetResources()
 	if err != nil {

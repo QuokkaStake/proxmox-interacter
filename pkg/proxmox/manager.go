@@ -39,7 +39,7 @@ func (m *Manager) GetNodes() ([]types.ClusterInfo, error) {
 		go func(index int, client *Client) {
 			defer wg.Done()
 
-			response, err := client.GetNodes()
+			response, err := client.GetNodesWithAssets()
 			clusterWithError := types.ClusterInfo{Name: client.Config.Name}
 
 			if err != nil {

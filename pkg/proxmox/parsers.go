@@ -149,3 +149,36 @@ func (c *Client) ParseNodesWithStoragesFromResponse(response *types.ProxmoxStatu
 
 	return result, nil
 }
+
+func (c *Client) ParseNodesWithAssetsFromResponse(response *types.ProxmoxStatusResponse) ([]types.NodeWithAssets, error) {
+	nodes, err := c.ParseNodesFromResponse(response)
+	if err != nil {
+		return nil, err
+	}
+
+	containers, err := c.ParseContainersFromResponse(response)
+	if err != nil {
+		return nil, err
+	}
+
+	storages, err := c.ParseStoragesFromResponse(response)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]types.NodeWithAssets, len(nodes))
+
+	for index, node := range nodes {
+		result[index] = types.NodeWithAssets{
+			Node: node,
+			Containers: utils.Filter(containers, func(c types.Container) bool {
+				return c.Node == node.Node
+			}),
+			Storages: utils.Filter(storages, func(c types.Storage) bool {
+				return c.Node == node.Node
+			}),
+		}
+	}
+
+	return result, nil
+}

@@ -7,6 +7,6 @@ Got error: {{ $cluster.Error }}
 No nodes present
 {{- end }}
 {{- range $node := $cluster.Nodes }}
-- {{ $node.GetEmoji }} {{ SerializeLink $node.Link }}
+- {{ $node.Node.GetEmoji }} {{ SerializeLink $node.Node.Link }}
 {{- end }}
 {{ end -}}
