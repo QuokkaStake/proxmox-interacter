@@ -3,8 +3,6 @@ package proxmox
 import (
 	"fmt"
 	"main/pkg/types"
-	"main/pkg/utils"
-	"strconv"
 	"sync"
 
 	"github.com/rs/zerolog"
@@ -59,43 +57,28 @@ func (m *Manager) GetNodes() (types.ClusterInfos, error) {
 	return responses, nil
 }
 
-func (m *Manager) GetContainers() ([]types.Container, error) {
-	responses := make([]types.Container, 0)
-
-	for _, client := range m.Clients {
-		if response, err := client.GetContainers(); err != nil {
-			return responses, err
-		} else {
-			responses = append(responses, response...)
-		}
+func (m *Manager) findContainerAndClientByName(query string) (*types.Container, *Client, error) {
+	clusters, err := m.GetNodes()
+	if err != nil {
+		return nil, nil, err
 	}
 
-	return responses, nil
-}
+	container, clusterName, found := clusters.FindContainer(query)
+	if !found {
+		return nil, nil, fmt.Errorf("Container is not found!")
+	}
 
-func (m *Manager) FindNodeWithClient(containerName string) (*types.Container, *Client, error) {
 	for _, client := range m.Clients {
-		containers, err := client.GetContainers()
-		if err != nil {
-			return nil, nil, err
-		}
-
-		container, found := utils.Find(containers, func(c types.Container) bool {
-			return c.ID == containerName ||
-				strconv.FormatInt(c.VMID, 10) == containerName ||
-				c.Name == containerName
-		})
-
-		if found {
+		if client.Config.Name == clusterName {
 			return container, client, nil
 		}
 	}
 
-	return nil, nil, fmt.Errorf("Container is not found")
+	return nil, nil, fmt.Errorf("Cluster is not found!")
 }
 
 func (m *Manager) StartContainer(containerName string) (*types.Container, error) {
-	container, client, err := m.FindNodeWithClient(containerName)
+	container, client, err := m.findContainerAndClientByName(containerName)
 	if err != nil {
 		return container, err
 	}
@@ -113,7 +96,7 @@ func (m *Manager) StartContainer(containerName string) (*types.Container, error)
 }
 
 func (m *Manager) StopContainer(containerName string) (*types.Container, error) {
-	container, client, err := m.FindNodeWithClient(containerName)
+	container, client, err := m.findContainerAndClientByName(containerName)
 	if err != nil {
 		return container, err
 	}
@@ -131,7 +114,7 @@ func (m *Manager) StopContainer(containerName string) (*types.Container, error) 
 }
 
 func (m *Manager) RestartContainer(containerName string) (*types.Container, error) {
-	container, client, err := m.FindNodeWithClient(containerName)
+	container, client, err := m.findContainerAndClientByName(containerName)
 	if err != nil {
 		return container, err
 	}

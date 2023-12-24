@@ -53,34 +53,6 @@ func (c *Client) GetNodesWithAssets() ([]types.NodeWithAssets, error) {
 	return nodes, nil
 }
 
-func (c *Client) GetNodes() ([]types.Node, error) {
-	resources, err := c.GetResources()
-	if err != nil {
-		return []types.Node{}, err
-	}
-
-	nodes, err := c.ParseNodesFromResponse(resources)
-	if err != nil {
-		return []types.Node{}, err
-	}
-
-	return nodes, nil
-}
-
-func (c *Client) GetContainers() ([]types.Container, error) {
-	resources, err := c.GetResources()
-	if err != nil {
-		return []types.Container{}, err
-	}
-
-	containers, err := c.ParseContainersFromResponse(resources)
-	if err != nil {
-		return []types.Container{}, err
-	}
-
-	return containers, nil
-}
-
 func (c *Client) StartContainer(container types.Container) (*types.ProxmoxActionResponse, error) {
 	return c.ContainerAction(container, "start")
 }

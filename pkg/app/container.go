@@ -25,7 +25,7 @@ func (a *App) HandleContainerInfo(c tele.Context) error {
 		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	container, found := clusters.FindContainer(args[0])
+	container, _, found := clusters.FindContainer(args[0])
 	if !found {
 		return a.BotReply(c, "Container is not found")
 	}

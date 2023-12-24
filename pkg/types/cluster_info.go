@@ -28,7 +28,7 @@ func (c ClusterInfos) FindNode(query string) (*Node, bool) {
 	return nil, false
 }
 
-func (c ClusterInfos) FindContainer(query string) (*Container, bool) {
+func (c ClusterInfos) FindContainer(query string) (*Container, string, bool) {
 	for _, cluster := range c {
 		if cluster.Error != nil {
 			continue
@@ -40,11 +40,11 @@ func (c ClusterInfos) FindContainer(query string) (*Container, bool) {
 				if strconv.FormatInt(container.VMID, 10) == query ||
 					container.ID == query ||
 					container.Name == query {
-					return &container, true
+					return &container, cluster.Name, true
 				}
 			}
 		}
 	}
 
-	return nil, false
+	return nil, "", false
 }
