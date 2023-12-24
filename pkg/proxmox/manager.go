@@ -73,20 +73,6 @@ func (m *Manager) GetContainers() ([]types.Container, error) {
 	return responses, nil
 }
 
-func (m *Manager) GetNodesWithContainers() ([]types.NodeWithContainers, error) {
-	responses := make([]types.NodeWithContainers, 0)
-
-	for _, client := range m.Clients {
-		if response, err := client.GetNodesWithContainers(); err != nil {
-			return responses, err
-		} else {
-			responses = append(responses, response...)
-		}
-	}
-
-	return responses, nil
-}
-
 func (m *Manager) FindNodeWithClient(containerName string) (*types.Container, *Client, error) {
 	for _, client := range m.Clients {
 		containers, err := client.GetContainers()

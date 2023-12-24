@@ -10,11 +10,6 @@ type NodeWithAssets struct {
 	Storages   []Storage
 }
 
-type NodeWithContainers struct {
-	Node       Node
-	Containers []Container
-}
-
 type NodeWithStorages struct {
 	Node     Node
 	Storages []Storage

@@ -81,20 +81,6 @@ func (c *Client) GetContainers() ([]types.Container, error) {
 	return containers, nil
 }
 
-func (c *Client) GetNodesWithContainers() ([]types.NodeWithContainers, error) {
-	resources, err := c.GetResources()
-	if err != nil {
-		return nil, err
-	}
-
-	nodesWithContainers, err := c.ParseNodesWithContainersFromResponse(resources)
-	if err != nil {
-		return nil, err
-	}
-
-	return nodesWithContainers, nil
-}
-
 func (c *Client) StartContainer(container types.Container) (*types.ProxmoxActionResponse, error) {
 	return c.ContainerAction(container, "start")
 }

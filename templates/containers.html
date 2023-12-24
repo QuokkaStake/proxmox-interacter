@@ -1,10 +1,16 @@
 <strong>Containers/VMs list</strong>
-{{- if not . }}
-<strong>No containers/VMs present</strong>
+
+{{ range $cluster := . -}}
+<strong>Cluster {{ $cluster.Name }}</strong>
+{{- if $cluster.Error }}
+Got error: {{ $cluster.Error }}
+{{- else if not .Nodes }}
+No nodes present
 {{- end }}
-{{- range $node := . }}
+{{- range $node := $cluster.Nodes }}
 {{ SerializeLink $node.Node.Link }}:
 {{- range $container := $node.Containers }}
 - {{ $container.GetEmoji }} {{ SerializeLink $container.Link }}
 {{- end }}
+{{ end }}
 {{ end }}
