@@ -60,9 +60,9 @@ func (a *App) Start() {
 	a.Bot.Handle("/containers", a.HandleListContainers)
 	a.Bot.Handle("/container", a.HandleContainerInfo)
 	a.Bot.Handle("/node", a.HandleNodeInfo)
-	a.Bot.Handle("/start", a.HandleStartContainer)
-	a.Bot.Handle("/stop", a.HandleStopContainer)
-	a.Bot.Handle("/restart", a.HandleRestartContainer)
+	a.Bot.Handle("/start", a.HandleContainerAction("start"))
+	a.Bot.Handle("/stop", a.HandleContainerAction("stop"))
+	a.Bot.Handle("/restart", a.HandleContainerAction("restart"))
 	a.Bot.Handle("/disks", a.HandleListDisks)
 	a.Bot.Handle("/help", a.HandleStartContainer)
 
@@ -77,8 +77,12 @@ func (a *App) HandleCallback(c tele.Context) error {
 	callback := c.Callback()
 
 	callbacks := map[string]func(tele.Context, string) error{
-		CallbackPrefixRestart:       a.HandleDoRestartContainer,
-		CallbackPrefixCancelRestart: a.HandleDoCancelRestartContainer,
+		CallbackPrefixRestart:       a.HandleDoContainerAction("restart"),
+		CallbackPrefixCancelRestart: a.HandleDoCancelContainerAction("restart"),
+		CallbackPrefixStart:         a.HandleDoContainerAction("start"),
+		CallbackPrefixCancelStart:   a.HandleDoCancelContainerAction("start"),
+		CallbackPrefixStop:          a.HandleDoContainerAction("stop"),
+		CallbackPrefixCancelStop:    a.HandleDoCancelContainerAction("stop"),
 	}
 
 	unique := strings.TrimSpace(callback.Data)

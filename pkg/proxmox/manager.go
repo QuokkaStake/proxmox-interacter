@@ -77,56 +77,32 @@ func (m *Manager) findContainerAndClientByName(query string) (*types.Container, 
 	return nil, nil, fmt.Errorf("Cluster is not found!")
 }
 
-func (m *Manager) StartContainer(containerName string) (*types.Container, error) {
+func (m *Manager) StartContainer(containerName string) error {
 	container, client, err := m.findContainerAndClientByName(containerName)
 	if err != nil {
-		return container, err
-	}
-
-	if container.IsRunning() {
-		return container, fmt.Errorf("Container is already running!")
+		return err
 	}
 
 	_, err = client.StartContainer(*container)
-	if err != nil {
-		return container, err
-	}
-
-	return container, nil
+	return err
 }
 
-func (m *Manager) StopContainer(containerName string) (*types.Container, error) {
+func (m *Manager) StopContainer(containerName string) error {
 	container, client, err := m.findContainerAndClientByName(containerName)
 	if err != nil {
-		return container, err
-	}
-
-	if !container.IsRunning() {
-		return container, fmt.Errorf("Container is not running!")
+		return err
 	}
 
 	_, err = client.StopContainer(*container)
-	if err != nil {
-		return container, err
-	}
-
-	return container, nil
+	return err
 }
 
-func (m *Manager) RestartContainer(containerName string) (*types.Container, error) {
+func (m *Manager) RestartContainer(containerName string) error {
 	container, client, err := m.findContainerAndClientByName(containerName)
 	if err != nil {
-		return container, err
-	}
-
-	if !container.IsRunning() {
-		return container, fmt.Errorf("Container is not running!")
+		return err
 	}
 
 	_, err = client.RebootContainer(*container)
-	if err != nil {
-		return container, err
-	}
-
-	return container, nil
+	return err
 }
