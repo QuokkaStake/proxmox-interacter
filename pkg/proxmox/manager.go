@@ -28,8 +28,8 @@ func NewManager(config *types.Config, logger *zerolog.Logger) *Manager {
 	}
 }
 
-func (m *Manager) GetNodes() ([]types.ClusterInfo, error) {
-	responses := make([]types.ClusterInfo, len(m.Clients))
+func (m *Manager) GetNodes() (types.ClusterInfos, error) {
+	responses := make(types.ClusterInfos, len(m.Clients))
 
 	var mutex sync.Mutex
 	var wg sync.WaitGroup
