@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // {
 //	"maxmem": 67186364416,
@@ -52,4 +54,38 @@ func (n Node) GetEmoji() string {
 
 func (n Node) GetCPUUsage() string {
 	return fmt.Sprintf("%.2f%%", n.CPU*100)
+}
+
+/* ------------------------------- */
+
+type NodeMatcher struct {
+	Name string
+	ID   string
+}
+
+func NewNodeMatcher(matchers map[string]string) (NodeMatcher, error) {
+	matcher := NodeMatcher{}
+
+	for matcherKey, matcherValue := range matchers {
+		if matcherKey == "name" {
+			matcher.Name = matcherValue
+		} else if matcherKey == "id" {
+			matcher.ID = matcherValue
+		} else {
+			return matcher, fmt.Errorf("expected one of the keys 'name', 'id', but got '%s'", matcherKey)
+		}
+	}
+
+	return matcher, nil
+}
+
+func (n Node) Matches(matcher NodeMatcher) bool {
+	if matcher.ID != "" && matcher.ID != n.ID {
+		return false
+	}
+	if matcher.Name != "" && matcher.Name != n.Node {
+		return false
+	}
+
+	return true
 }

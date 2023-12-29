@@ -50,20 +50,26 @@ func ParseMatchers(query string) map[string]string {
 	return matchers
 }
 
-func (c ClusterInfos) FindNode(query string) (*Node, bool) {
+func (c ClusterInfos) FindNode(query string) (*Node, error) {
+	queryParsed := ParseMatchers(query)
+	nodeMatcher, err := NewNodeMatcher(queryParsed)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, cluster := range c {
 		if cluster.Error != nil {
 			continue
 		}
 
 		for _, node := range cluster.Nodes {
-			if node.Node.Node == query || node.Node.ID == query {
-				return &node.Node, true
+			if node.Node.Matches(nodeMatcher) {
+				return &node.Node, nil
 			}
 		}
 	}
 
-	return nil, false
+	return nil, fmt.Errorf("Node is not found!")
 }
 
 func (c ClusterInfos) FindContainer(query string) (*Container, string, error) {

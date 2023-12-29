@@ -25,9 +25,9 @@ func (a *App) HandleNodeInfo(c tele.Context) error {
 		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	node, found := clusters.FindNode(args[0])
-	if !found {
-		return a.BotReply(c, "Node is not found")
+	node, err := clusters.FindNode(args[0])
+	if err != nil {
+		return a.BotReply(c, fmt.Sprintf("Error finding node: %s\n", err))
 	}
 
 	template, err := a.TemplateManager.Render("node", node)
