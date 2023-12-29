@@ -7,7 +7,7 @@
 <strong>Max RAM</strong>: {{ FormatSize .MaxMemory }}
 <strong>Max disk</strong>: {{ FormatSize .MaxDisk }}
 
-{{ if .IsRunning }}
+{{ if .IsRunning -}}
 <strong>Uptime</strong>: {{ FormatDuration .Uptime }}
 <strong>CPU usage</strong>: {{ .GetCPUUsage }}
 <strong>RAM usage</strong>: {{ FormatSize .Memory }}
