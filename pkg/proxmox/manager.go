@@ -63,9 +63,9 @@ func (m *Manager) findContainerAndClientByName(query string) (*types.Container, 
 		return nil, nil, err
 	}
 
-	container, clusterName, found := clusters.FindContainer(query)
-	if !found {
-		return nil, nil, fmt.Errorf("Container is not found!")
+	container, clusterName, err := clusters.FindContainer(query)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	for _, client := range m.Clients {

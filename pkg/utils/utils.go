@@ -3,11 +3,9 @@ package utils
 import (
 	"fmt"
 	"html/template"
-	"main/pkg/logger"
 	"main/pkg/types"
 	"math"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -62,15 +60,6 @@ func MergeMaps(first, second map[string]string) map[string]string {
 	}
 
 	return first
-}
-
-func StrToFloat64(s string) float64 {
-	f, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		logger.GetDefaultLogger().Fatal().Err(err).Str("value", s).Msg("Could not parse float")
-	}
-
-	return f
 }
 
 func SerializeLink(link types.Link) template.HTML {

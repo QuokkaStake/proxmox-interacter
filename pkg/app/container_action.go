@@ -69,9 +69,9 @@ func (a *App) HandleContainerAction(actionName string) func(c tele.Context) erro
 			return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 		}
 
-		container, _, found := clusters.FindContainer(args[0])
-		if !found {
-			return a.BotReply(c, "Container is not found!")
+		container, _, err := clusters.FindContainer(args[0])
+		if err != nil {
+			return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
 		}
 
 		template, err := a.TemplateManager.Render("container_action", ContainerActionRender{
@@ -110,9 +110,9 @@ func (a *App) HandleDoContainerAction(actionName string) func(c tele.Context, da
 			return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 		}
 
-		container, _, found := clusters.FindContainer(data)
-		if !found {
-			return a.BotReply(c, "Container is not found!")
+		container, _, err := clusters.FindContainer(data)
+		if err != nil {
+			return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
 		}
 
 		if container.IsRunning() && !action.shouldContainerBeStarted {

@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // {
 //	"maxmem": 17179869184,
@@ -80,4 +83,44 @@ func (c Container) GetType() string {
 	}
 
 	return "Virtual machine"
+}
+
+/* ------------------------------- */
+
+type ContainerMatcher struct {
+	Name string
+	Node string
+	ID   string
+}
+
+func NewContainerMatcher(matchers map[string]string) (ContainerMatcher, error) {
+	matcher := ContainerMatcher{}
+
+	for matcherKey, matcherValue := range matchers {
+		if matcherKey == "node" {
+			matcher.Node = matcherValue
+		} else if matcherKey == "name" {
+			matcher.Name = matcherValue
+		} else if matcherKey == "id" {
+			matcher.ID = matcherValue
+		} else {
+			return matcher, fmt.Errorf("expected one of the keys 'node', 'name', 'id', but got '%s'", matcherKey)
+		}
+	}
+
+	return matcher, nil
+}
+
+func (c Container) Matches(matcher ContainerMatcher) bool {
+	if matcher.ID != "" && matcher.ID != c.ID && matcher.ID != strconv.FormatInt(c.VMID, 10) {
+		return false
+	}
+	if matcher.Node != "" && matcher.Node != c.Node {
+		return false
+	}
+	if matcher.Name != "" && matcher.Name != c.Name {
+		return false
+	}
+
+	return true
 }

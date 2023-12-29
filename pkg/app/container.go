@@ -25,9 +25,9 @@ func (a *App) HandleContainerInfo(c tele.Context) error {
 		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	container, _, found := clusters.FindContainer(args[0])
-	if !found {
-		return a.BotReply(c, "Container is not found")
+	container, _, err := clusters.FindContainer(args[0])
+	if err != nil {
+		return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
 	}
 
 	template, err := a.TemplateManager.Render("container", container)
