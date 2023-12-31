@@ -27,7 +27,16 @@ func (a *App) HandleContainerScale(c tele.Context) error {
 
 	container, _, scaleInfo, err := clusters.FindContainerToScale(args[0])
 	if err != nil {
-		return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
+		template, err := a.TemplateManager.Render("container_error", ContainerErrorRender{
+			Error:        err,
+			ClusterInfos: clusters,
+		})
+		if err != nil {
+			a.Logger.Error().Err(err).Msg("Error rendering container template")
+			return c.Reply(fmt.Sprintf("Error rendering template when processing error: %s", err))
+		}
+
+		return a.BotReply(c, template)
 	}
 
 	template, err := a.TemplateManager.Render("container_scale", ContainerScaleRender{

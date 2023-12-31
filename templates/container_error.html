@@ -1,0 +1,10 @@
+❌ Error fetching container: {{ .Error }}
+
+{{ if .ClusterInfos.HasErrors -}}
+Additionally, when querying, the following errors occurred:
+{{ range $cluster := .ClusterInfos -}}
+{{ if $cluster.Error -}}
+- {{ $cluster.Name }}: {{ $cluster.Error }}
+{{ end -}}
+{{ end -}}
+{{ end -}}

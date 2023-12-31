@@ -11,3 +11,8 @@ type ContainerScaleRender struct {
 	Container   types.Container
 	ScaleParams types.ScaleMatcher
 }
+
+type ContainerErrorRender struct {
+	Error        error
+	ClusterInfos types.ClusterInfos
+}

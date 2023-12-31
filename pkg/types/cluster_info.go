@@ -121,3 +121,13 @@ func (c ClusterInfos) FindContainerToScale(query string) (*Container, string, Sc
 
 	return nil, "", scaleMatcher, fmt.Errorf("Container is not found!")
 }
+
+func (c ClusterInfos) HasErrors() bool {
+	for _, info := range c {
+		if info.Error != nil {
+			return true
+		}
+	}
+
+	return false
+}
