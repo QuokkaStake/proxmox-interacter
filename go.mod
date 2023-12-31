@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/c2h5oh/datasize v0.0.0-20231215233829-aa82cc1e6500
 	github.com/creasty/defaults v1.7.0
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0

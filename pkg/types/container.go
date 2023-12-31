@@ -124,3 +124,17 @@ func (c Container) Matches(matcher ContainerMatcher) bool {
 
 	return true
 }
+
+func (c Container) ScaleMatches(matcher ScaleMatcher) bool {
+	if matcher.ID != "" && matcher.ID != c.ID && matcher.ID != strconv.FormatInt(c.VMID, 10) {
+		return false
+	}
+	if matcher.Node != "" && matcher.Node != c.Node {
+		return false
+	}
+	if matcher.Name != "" && matcher.Name != c.Name {
+		return false
+	}
+
+	return true
+}

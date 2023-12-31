@@ -7,4 +7,6 @@ const (
 	CallbackPrefixCancelStart   = "cancelstart_"
 	CallbackPrefixStop          = "stop_"
 	CallbackPrefixCancelStop    = "cancelstop_"
+	CallbackPrefixScale         = "scale_"
+	CallbackPrefixCancelScale   = "cancelscale_"
 )

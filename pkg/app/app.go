@@ -63,6 +63,7 @@ func (a *App) Start() {
 	a.Bot.Handle("/start", a.HandleContainerAction("start"))
 	a.Bot.Handle("/stop", a.HandleContainerAction("stop"))
 	a.Bot.Handle("/restart", a.HandleContainerAction("restart"))
+	a.Bot.Handle("/scale", a.HandleContainerScale)
 	a.Bot.Handle("/disks", a.HandleListDisks)
 	a.Bot.Handle("/help", a.HandleStartContainer)
 

@@ -93,11 +93,6 @@ func (a *App) HandleContainerAction(actionName string) func(c tele.Context) erro
 		)
 
 		return a.BotReply(c, template, menu)
-
-		// container, err := a.ProxmoxManager.RestartContainer(args[0])
-		// if err != nil {
-		//	return a.BotReply(c, fmt.Sprintf("Error starting container: %s", err))
-		//}
 	}
 }
 
