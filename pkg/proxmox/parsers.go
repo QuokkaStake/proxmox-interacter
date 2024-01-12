@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"main/pkg/types"
 	"main/pkg/utils"
+	"strconv"
 )
 
 func (c *Client) ParseContainersFromResponse(response *types.ProxmoxStatusResponse) ([]types.Container, error) {
@@ -131,4 +132,31 @@ func (c *Client) ParseNodesWithAssetsFromResponse(response *types.ProxmoxStatusR
 	}
 
 	return result, nil
+}
+
+func (c *Client) ParseLxcContainerConfig(config *types.ProxmoxLxcConfigResponse) (*types.ContainerConfig, error) {
+	return &types.ContainerConfig{
+		Cores:       config.Data.Cores,
+		Memory:      config.Data.Memory * 1024 * 1024,
+		Swap:        config.Data.Swap * 1024 * 1024,
+		SwapPresent: true,
+		Digest:      config.Data.Digest,
+		OnBoot:      utils.IntToBool(config.Data.OnBoot),
+	}, nil
+}
+
+func (c *Client) ParseQemuContainerConfig(config *types.ProxmoxQemuConfigResponse) (*types.ContainerConfig, error) {
+	memory, err := strconv.ParseInt(config.Data.Memory, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.ContainerConfig{
+		Cores:       config.Data.Cores,
+		Memory:      memory * 1024 * 1024,
+		Swap:        0,
+		SwapPresent: false,
+		Digest:      config.Data.Digest,
+		OnBoot:      utils.IntToBool(config.Data.OnBoot),
+	}, nil
 }

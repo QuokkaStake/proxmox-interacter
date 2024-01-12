@@ -29,6 +29,7 @@ func (manager *TemplateManager) GetTemplate(name string) (*template.Template, er
 		Funcs(template.FuncMap{
 			"SerializeLink":  utils.SerializeLink,
 			"FormatSize":     utils.FormatSize,
+			"FormatBool":     utils.FormatBool,
 			"FormatDuration": utils.FormatDuration,
 		}).
 		ParseFS(templatesList.Templates, filename)

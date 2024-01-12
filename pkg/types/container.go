@@ -57,6 +57,14 @@ func (c Container) GetCPUUsage() string {
 	return fmt.Sprintf("%.2f%%", c.CPU*100)
 }
 
+func (c Container) GetRamUsage() string {
+	return fmt.Sprintf("%.2f%%", float64(c.Memory)/float64(c.MaxMemory)*100)
+}
+
+func (c Container) GetDiskUsage() string {
+	return fmt.Sprintf("%.2f%%", float64(c.Disk)/float64(c.MaxDisk)*100)
+}
+
 func (c Container) GetEmoji() string {
 	if c.Status == "running" {
 		return "🟢"

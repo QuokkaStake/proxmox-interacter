@@ -74,6 +74,10 @@ func SerializeLink(link types.Link) template.HTML {
 	))
 }
 
+func IntToBool(value int) bool {
+	return value != 0
+}
+
 func FormatSize(size int64) string {
 	sizeFloat := float64(size)
 
@@ -94,6 +98,14 @@ func FormatSize(size int64) string {
 	}
 
 	return fmt.Sprintf("%.2f B", sizeFloat)
+}
+
+func FormatBool(value bool) string {
+	if value {
+		return "Yes"
+	}
+
+	return "No"
 }
 
 func FormatDuration(durationInt int64) string {
