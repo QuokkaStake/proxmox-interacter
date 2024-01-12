@@ -1,0 +1,16 @@
+Going to scale the following container:
+- Name: {{ SerializeLink .Container.Link }}
+- Node: {{ .Container.Node }}
+
+{{ if not (.ScaleParams.AnythingChanged .Container) -}}
+Nothing to scale.
+{{ else -}}
+Scaling the following params:
+{{ if .ScaleParams.CPUChanged .Container -}}
+- CPU: {{ .Container.MaxCPU }} -> {{ .ScaleParams.CPU }}
+{{ end -}}
+{{ if .ScaleParams.MemoryChanged .Container -}}
+- Memory: {{ FormatSize .Container.MaxMemory }} -> {{ FormatSize .ScaleParams.Memory }}
+{{ end -}}
+{{ end -}}
+<!-- - Swap: ??? MB -> {{ FormatSize .ScaleParams.Swap }}-->

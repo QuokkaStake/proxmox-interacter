@@ -56,6 +56,15 @@ func (m *Manager) GetNodes() (types.ClusterInfos, error) {
 
 	return responses, nil
 }
+func (m *Manager) findClientByName(clusterName string) (*Client, bool) {
+	for _, client := range m.Clients {
+		if client.Config.Name == clusterName {
+			return client, true
+		}
+	}
+
+	return nil, false
+}
 
 func (m *Manager) findContainerAndClientByName(query string) (*types.Container, *Client, error) {
 	clusters, err := m.GetNodes()
@@ -68,10 +77,8 @@ func (m *Manager) findContainerAndClientByName(query string) (*types.Container, 
 		return nil, nil, err
 	}
 
-	for _, client := range m.Clients {
-		if client.Config.Name == clusterName {
-			return container, client, nil
-		}
+	if client, found := m.findClientByName(clusterName); found {
+		return container, client, nil
 	}
 
 	return nil, nil, fmt.Errorf("Cluster is not found!")
@@ -105,4 +112,28 @@ func (m *Manager) RestartContainer(containerName string) error {
 
 	_, err = client.RebootContainer(*container)
 	return err
+}
+
+func (m *Manager) GetContainerConfig(container types.Container, clusterName string) (*types.ContainerConfig, error) {
+	client, found := m.findClientByName(clusterName)
+	if !found {
+		return nil, fmt.Errorf("Cluster is not found!")
+	}
+
+	switch container.Type {
+	case "lxc":
+		if config, err := client.GetLxcContainerConfig(container); err != nil {
+			return nil, err
+		} else {
+			return client.ParseLxcContainerConfig(config)
+		}
+	case "qemu":
+		if config, err := client.GetQemuContainerConfig(container); err != nil {
+			return nil, err
+		} else {
+			return client.ParseQemuContainerConfig(config)
+		}
+	}
+
+	return nil, fmt.Errorf("Unsupported container type: %s", container.Type)
 }

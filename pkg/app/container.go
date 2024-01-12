@@ -25,12 +25,32 @@ func (a *App) HandleContainerInfo(c tele.Context) error {
 		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	container, _, err := clusters.FindContainer(args[0])
+	container, cluster, err := clusters.FindContainer(args[0])
 	if err != nil {
-		return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
+		template, err := a.TemplateManager.Render("container_error", ContainerErrorRender{
+			Error:        err,
+			ClusterInfos: clusters,
+		})
+		if err != nil {
+			a.Logger.Error().Err(err).Msg("Error rendering container template")
+			return c.Reply(fmt.Sprintf("Error rendering template when processing error: %s", err))
+		}
+
+		return a.BotReply(c, template)
 	}
 
-	template, err := a.TemplateManager.Render("container", container)
+	render := ContainerInfoRender{
+		Container: *container,
+	}
+
+	if config, err := a.ProxmoxManager.GetContainerConfig(*container, cluster); err != nil {
+		a.Logger.Error().Err(err).Msg("Error fetching container config")
+		render.ConfigError = err
+	} else {
+		render.Config = config
+	}
+
+	template, err := a.TemplateManager.Render("container", render)
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("Error rendering container template")
 		return c.Reply(fmt.Sprintf("Error rendering template: %s", err))

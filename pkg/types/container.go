@@ -57,6 +57,14 @@ func (c Container) GetCPUUsage() string {
 	return fmt.Sprintf("%.2f%%", c.CPU*100)
 }
 
+func (c Container) GetRamUsage() string {
+	return fmt.Sprintf("%.2f%%", float64(c.Memory)/float64(c.MaxMemory)*100)
+}
+
+func (c Container) GetDiskUsage() string {
+	return fmt.Sprintf("%.2f%%", float64(c.Disk)/float64(c.MaxDisk)*100)
+}
+
 func (c Container) GetEmoji() string {
 	if c.Status == "running" {
 		return "🟢"
@@ -112,6 +120,20 @@ func NewContainerMatcher(matchers map[string]string) (ContainerMatcher, error) {
 }
 
 func (c Container) Matches(matcher ContainerMatcher) bool {
+	if matcher.ID != "" && matcher.ID != c.ID && matcher.ID != strconv.FormatInt(c.VMID, 10) {
+		return false
+	}
+	if matcher.Node != "" && matcher.Node != c.Node {
+		return false
+	}
+	if matcher.Name != "" && matcher.Name != c.Name {
+		return false
+	}
+
+	return true
+}
+
+func (c Container) ScaleMatches(matcher ScaleMatcher) bool {
 	if matcher.ID != "" && matcher.ID != c.ID && matcher.ID != strconv.FormatInt(c.VMID, 10) {
 		return false
 	}

@@ -3,3 +3,4 @@ main
 .idea
 dist/
 proxmox-interacter
+**/.DS_Store

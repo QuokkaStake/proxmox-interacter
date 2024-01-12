@@ -71,7 +71,16 @@ func (a *App) HandleContainerAction(actionName string) func(c tele.Context) erro
 
 		container, _, err := clusters.FindContainer(args[0])
 		if err != nil {
-			return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
+			template, err := a.TemplateManager.Render("container_error", ContainerErrorRender{
+				Error:        err,
+				ClusterInfos: clusters,
+			})
+			if err != nil {
+				a.Logger.Error().Err(err).Msg("Error rendering container template")
+				return c.Reply(fmt.Sprintf("Error rendering template when processing error: %s", err))
+			}
+
+			return a.BotReply(c, template)
 		}
 
 		template, err := a.TemplateManager.Render("container_action", ContainerActionRender{
@@ -93,11 +102,6 @@ func (a *App) HandleContainerAction(actionName string) func(c tele.Context) erro
 		)
 
 		return a.BotReply(c, template, menu)
-
-		// container, err := a.ProxmoxManager.RestartContainer(args[0])
-		// if err != nil {
-		//	return a.BotReply(c, fmt.Sprintf("Error starting container: %s", err))
-		//}
 	}
 }
 
@@ -112,7 +116,16 @@ func (a *App) HandleDoContainerAction(actionName string) func(c tele.Context, da
 
 		container, _, err := clusters.FindContainer(data)
 		if err != nil {
-			return a.BotReply(c, fmt.Sprintf("Error finding container: %s", err))
+			template, err := a.TemplateManager.Render("container_error", ContainerErrorRender{
+				Error:        err,
+				ClusterInfos: clusters,
+			})
+			if err != nil {
+				a.Logger.Error().Err(err).Msg("Error rendering container template")
+				return c.Reply(fmt.Sprintf("Error rendering template when processing error: %s", err))
+			}
+
+			return a.BotReply(c, template)
 		}
 
 		if container.IsRunning() && !action.shouldContainerBeStarted {

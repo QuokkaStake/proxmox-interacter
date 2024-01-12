@@ -96,3 +96,38 @@ func (c ClusterInfos) FindContainer(query string) (*Container, string, error) {
 
 	return nil, "", fmt.Errorf("Container is not found!")
 }
+
+func (c ClusterInfos) FindContainerToScale(query string) (*Container, string, ScaleMatcher, error) {
+	queryParsed := ParseMatchers(query)
+	scaleMatcher, err := NewScaleMatcher(queryParsed)
+	if err != nil {
+		return nil, "", scaleMatcher, err
+	}
+
+	for _, cluster := range c {
+		if cluster.Error != nil {
+			continue
+		}
+
+		// Taking the first container we can find matching the filter.
+		for _, node := range cluster.Nodes {
+			for _, container := range node.Containers {
+				if container.ScaleMatches(scaleMatcher) {
+					return &container, cluster.Name, scaleMatcher, nil
+				}
+			}
+		}
+	}
+
+	return nil, "", scaleMatcher, fmt.Errorf("Container is not found!")
+}
+
+func (c ClusterInfos) HasErrors() bool {
+	for _, info := range c {
+		if info.Error != nil {
+			return true
+		}
+	}
+
+	return false
+}

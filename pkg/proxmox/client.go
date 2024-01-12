@@ -65,6 +65,30 @@ func (c *Client) RebootContainer(container types.Container) (*types.ProxmoxActio
 	return c.ContainerAction(container, "reboot")
 }
 
+func (c *Client) GetLxcContainerConfig(container types.Container) (*types.ProxmoxLxcConfigResponse, error) {
+	var response *types.ProxmoxLxcConfigResponse
+	url := c.RelativeLink(fmt.Sprintf(
+		"/api2/extjs/nodes/%s/lxc/%d/config",
+		container.Node,
+		container.VMID,
+	))
+	err := c.QueryAndDecode(url, &response)
+
+	return response, err
+}
+
+func (c *Client) GetQemuContainerConfig(container types.Container) (*types.ProxmoxQemuConfigResponse, error) {
+	var response *types.ProxmoxQemuConfigResponse
+	url := c.RelativeLink(fmt.Sprintf(
+		"/api2/extjs/nodes/%s/qemu/%d/config",
+		container.Node,
+		container.VMID,
+	))
+	err := c.QueryAndDecode(url, &response)
+
+	return response, err
+}
+
 func (c *Client) ContainerAction(container types.Container, action string) (*types.ProxmoxActionResponse, error) {
 	var response *types.ProxmoxActionResponse
 	url := c.RelativeLink(fmt.Sprintf(
