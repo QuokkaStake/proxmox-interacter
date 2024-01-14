@@ -84,6 +84,8 @@ func (a *App) HandleCallback(c tele.Context) error {
 		CallbackPrefixCancelStart:   a.HandleDoCancelContainerAction("start"),
 		CallbackPrefixStop:          a.HandleDoContainerAction("stop"),
 		CallbackPrefixCancelStop:    a.HandleDoCancelContainerAction("stop"),
+		CallbackPrefixScale:         a.HandleDoContainerScale,
+		CallbackPrefixCancelScale:   a.HandleDoCancelContainerScale,
 	}
 
 	unique := strings.TrimSpace(callback.Data)

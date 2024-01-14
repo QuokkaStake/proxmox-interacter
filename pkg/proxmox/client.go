@@ -8,6 +8,8 @@ import (
 	"io"
 	"main/pkg/types"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/rs/zerolog"
 )
@@ -33,8 +35,8 @@ func (c *Client) RelativeLink(url string) string {
 
 func (c *Client) GetResources() (*types.ProxmoxStatusResponse, error) {
 	var response *types.ProxmoxStatusResponse
-	url := c.RelativeLink("/api2/json/cluster/resources")
-	err := c.QueryAndDecode(url, &response)
+	queryUrl := c.RelativeLink("/api2/json/cluster/resources")
+	err := c.QueryAndDecode(queryUrl, &response)
 
 	return response, err
 }
@@ -67,37 +69,57 @@ func (c *Client) RebootContainer(container types.Container) (*types.ProxmoxActio
 
 func (c *Client) GetLxcContainerConfig(container types.Container) (*types.ProxmoxLxcConfigResponse, error) {
 	var response *types.ProxmoxLxcConfigResponse
-	url := c.RelativeLink(fmt.Sprintf(
+	queryUrl := c.RelativeLink(fmt.Sprintf(
 		"/api2/extjs/nodes/%s/lxc/%d/config",
 		container.Node,
 		container.VMID,
 	))
-	err := c.QueryAndDecode(url, &response)
+	err := c.QueryAndDecode(queryUrl, &response)
 
 	return response, err
 }
 
 func (c *Client) GetQemuContainerConfig(container types.Container) (*types.ProxmoxQemuConfigResponse, error) {
 	var response *types.ProxmoxQemuConfigResponse
-	url := c.RelativeLink(fmt.Sprintf(
+	queryUrl := c.RelativeLink(fmt.Sprintf(
 		"/api2/extjs/nodes/%s/qemu/%d/config",
 		container.Node,
 		container.VMID,
 	))
-	err := c.QueryAndDecode(url, &response)
+	err := c.QueryAndDecode(queryUrl, &response)
 
 	return response, err
 }
 
 func (c *Client) ContainerAction(container types.Container, action string) (*types.ProxmoxActionResponse, error) {
 	var response *types.ProxmoxActionResponse
-	url := c.RelativeLink(fmt.Sprintf(
+	queryUrl := c.RelativeLink(fmt.Sprintf(
 		"/api2/extjs/nodes/%s/%s/status/%s",
 		container.Node,
 		container.ID,
 		action,
 	))
-	err := c.QueryAndDecodePost(url, nil, &response)
+	err := c.QueryAndDecodePost(queryUrl, nil, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Success != 1 {
+		return nil, fmt.Errorf(response.Message)
+	}
+
+	return response, err
+}
+
+func (c *Client) ScaleContainer(container types.Container, data *url.Values) (*types.ProxmoxScaleResponse, error) {
+	var response *types.ProxmoxScaleResponse
+	queryUrl := c.RelativeLink(fmt.Sprintf(
+		"/api2/extjs/nodes/%s/%s/config",
+		container.Node,
+		container.ID,
+	))
+
+	err := c.QueryAndDecodePut(queryUrl, data, &response)
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +139,10 @@ func (c *Client) Query(url string) (io.ReadCloser, error) {
 
 func (c *Client) QueryPost(url string, body interface{}) (io.ReadCloser, error) {
 	return c.DoQuery("POST", url, body)
+}
+
+func (c *Client) QueryPut(url string, body interface{}) (io.ReadCloser, error) {
+	return c.DoQuery("PUT", url, body)
 }
 
 func (c *Client) QueryDelete(url string) error {
@@ -145,7 +171,18 @@ func (c *Client) QueryAndDecodePost(url string, postBody interface{}, output int
 	return json.NewDecoder(body).Decode(&output)
 }
 
-func (c *Client) DoQuery(method string, url string, body interface{}) (io.ReadCloser, error) {
+func (c *Client) QueryAndDecodePut(url string, postBody interface{}, output interface{}) error {
+	body, err := c.QueryPut(url, postBody)
+	if err != nil {
+		return err
+	}
+
+	defer body.Close()
+
+	return json.NewDecoder(body).Decode(&output)
+}
+
+func (c *Client) DoQuery(method string, queryUrl string, body interface{}) (io.ReadCloser, error) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -156,15 +193,22 @@ func (c *Client) DoQuery(method string, url string, body interface{}) (io.ReadCl
 	var err error
 
 	if body != nil {
-		buffer := new(bytes.Buffer)
+		switch bodyParsed := body.(type) {
+		case *url.Values:
+			{
+				req, err = http.NewRequest(method, queryUrl, strings.NewReader(bodyParsed.Encode()))
+			}
+		default:
+			buffer := new(bytes.Buffer)
 
-		if err := json.NewEncoder(buffer).Encode(body); err != nil {
-			return nil, err
+			if err := json.NewEncoder(buffer).Encode(body); err != nil {
+				return nil, err
+			}
+
+			req, err = http.NewRequest(method, queryUrl, buffer)
 		}
-
-		req, err = http.NewRequest(method, url, buffer)
 	} else {
-		req, err = http.NewRequest(method, url, nil)
+		req, err = http.NewRequest(method, queryUrl, nil)
 	}
 
 	if err != nil {
@@ -174,14 +218,14 @@ func (c *Client) DoQuery(method string, url string, body interface{}) (io.ReadCl
 	req.Header.Set("Authorization", fmt.Sprintf("PVEAPIToken=%s=%s", c.Config.User, c.Config.Token))
 
 	c.Logger.Trace().
-		Str("url", url).
+		Str("url", queryUrl).
 		Str("method", method).
 		Msg("Doing a Proxmox API query")
 
 	resp, err := client.Do(req)
 	if err != nil {
 		c.Logger.Error().
-			Str("url", url).
+			Str("url", queryUrl).
 			Str("method", method).
 			Err(err).
 			Msg("Error querying Proxmox")
@@ -190,7 +234,7 @@ func (c *Client) DoQuery(method string, url string, body interface{}) (io.ReadCl
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		c.Logger.Error().
-			Str("url", url).
+			Str("url", queryUrl).
 			Str("method", method).
 			Int("status", resp.StatusCode).
 			Msg("Got error code from Proxmox")

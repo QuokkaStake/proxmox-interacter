@@ -80,6 +80,6 @@ func (s ScaleMatcher) SwapChanged(config *ContainerConfig) bool {
 	return s.Swap != config.Swap
 }
 
-func (s ScaleMatcher) AnythingChanged(c Container) bool {
-	return s.CPUChanged(c) || s.MemoryChanged(c)
+func (s ScaleMatcher) AnythingChanged(c Container, config *ContainerConfig) bool {
+	return s.CPUChanged(c) || s.MemoryChanged(c) || s.SwapChanged(config)
 }

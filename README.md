@@ -1,7 +1,7 @@
 # proxmox-interacter
 
 ![Latest release](https://img.shields.io/github/v/release/QuokkaS/proxmox-interacter)
-[![Actions Status](https://github.com/QuokkaS/proxmox-interacter/workflows/test/badge.svg)](https://github.com/QuokkaS/proxmox-interacter/actions)
+[![Actions Status](https://github.com/QuokkaStake/proxmox-interacter/workflows/test/badge.svg)](https://github.com/QuokkaS/proxmox-interacter/actions)
 
 proxmox-interacter is a tool to interact with your Proxmox instances via a Telegram bot.
 Here's what it can do:
@@ -9,7 +9,7 @@ Here's what it can do:
 - List containers/VMs and show their details
 - Start/stop/restart containers
 - List Proxmox storages
-- (planned) Scale Proxmox containers/VMs on a fly
+- Scale Proxmox containers/VMs on a fly
 - (planned) See SMART stats of your storage devices
 - (planned) Backup VMs/containers
 
@@ -22,17 +22,20 @@ Why is it cool?
 
 ## How can I set it up?
 
-Before starting, you need to create a Telegram bot. Go to @Botfather at Telegram and create a new bot there. For bot commands, put the following:
+Before starting, you need to create a Telegram bot.
+Go to @Botfather at Telegram and create a new bot there.
+For bot commands, put the following:
 
 ```
 status - See status of your Proxmox instances
 containers - List your Proxmox containers and VMs
 container - Show the details of a Proxmox container/VM
 node - Show the detailed info about a Proxmox node
-start - Start a Proxmox container
-stop - Stop a Proxmox container
-restart - Restart a Proxmox container
+start - Start a Proxmox container/VM
+stop - Stop a Proxmox container/VM
+restart - Restart a Proxmox container/VM
 disks - List your Proxmox disks and their info
+scale - Scale a Proxmox container/VM
 ```
 
 Save the bot token somewhere, you'll need it later to for proxmox-interacter to function.
