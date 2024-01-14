@@ -9,6 +9,7 @@ type ContainerActionRender struct {
 
 type ContainerScaleRender struct {
 	Container   types.Container
+	Config      *types.ContainerConfig
 	ScaleParams types.ScaleMatcher
 }
 

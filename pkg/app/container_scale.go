@@ -25,7 +25,7 @@ func (a *App) HandleContainerScale(c tele.Context) error {
 		return a.BotReply(c, fmt.Sprintf("Error fetching nodes: %s", err))
 	}
 
-	container, _, scaleInfo, err := clusters.FindContainerToScale(args[0])
+	container, cluster, scaleInfo, err := clusters.FindContainerToScale(args[0])
 	if err != nil {
 		template, err := a.TemplateManager.Render("container_error", ContainerErrorRender{
 			Error:        err,
@@ -39,9 +39,16 @@ func (a *App) HandleContainerScale(c tele.Context) error {
 		return a.BotReply(c, template)
 	}
 
+	config, err := a.ProxmoxManager.GetContainerConfig(*container, cluster)
+	if err != nil {
+		a.Logger.Error().Err(err).Msg("Error fetching container config")
+		return a.BotReply(c, fmt.Sprintf("Error fetchign container config: %s", err))
+	}
+
 	template, err := a.TemplateManager.Render("container_scale", ContainerScaleRender{
 		Container:   *container,
 		ScaleParams: scaleInfo,
+		Config:      config,
 	})
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("Error rendering container_scale template")

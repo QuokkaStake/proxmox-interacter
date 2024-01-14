@@ -12,5 +12,7 @@ Scaling the following params:
 {{ if .ScaleParams.MemoryChanged .Container -}}
 - Memory: {{ FormatSize .Container.MaxMemory }} -> {{ FormatSize .ScaleParams.Memory }}
 {{ end -}}
+{{ if .ScaleParams.SwapChanged .Config -}}
+- Swap: {{ FormatSize .Config.Swap }} -> {{ FormatSize .ScaleParams.Swap }}
 {{ end -}}
-<!-- - Swap: ??? MB -> {{ FormatSize .ScaleParams.Swap }}-->
+{{ end -}}
