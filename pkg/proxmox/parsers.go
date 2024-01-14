@@ -3,9 +3,9 @@ package proxmox
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/c2h5oh/datasize"
 	"main/pkg/types"
 	"main/pkg/utils"
-	"strconv"
 )
 
 func (c *Client) ParseContainersFromResponse(response *types.ProxmoxStatusResponse) ([]types.Container, error) {
@@ -32,6 +32,10 @@ func (c *Client) ParseContainersFromResponse(response *types.ProxmoxStatusRespon
 		}
 
 		container.Link = c.Config.GetResourceLink(container)
+		container.NodeLink = c.Config.GetResourceLink(types.Node{
+			ID:   fmt.Sprintf("node/%s", container.Node),
+			Node: container.Node,
+		})
 
 		containers = append(containers, container)
 	}
@@ -94,6 +98,10 @@ func (c *Client) ParseStoragesFromResponse(response *types.ProxmoxStatusResponse
 		}
 
 		storage.Link = c.Config.GetResourceLink(storage)
+		storage.NodeLink = c.Config.GetResourceLink(types.Node{
+			ID:   fmt.Sprintf("node/%s", storage.Node),
+			Node: storage.Node,
+		})
 
 		storages = append(storages, storage)
 	}
@@ -146,14 +154,14 @@ func (c *Client) ParseLxcContainerConfig(config *types.ProxmoxLxcConfigResponse)
 }
 
 func (c *Client) ParseQemuContainerConfig(config *types.ProxmoxQemuConfigResponse) (*types.ContainerConfig, error) {
-	memory, err := strconv.ParseInt(config.Data.Memory, 10, 64)
+	memory, err := datasize.Parse([]byte(config.Data.Memory + "B"))
 	if err != nil {
 		return nil, err
 	}
 
 	return &types.ContainerConfig{
 		Cores:       config.Data.Cores,
-		Memory:      memory * 1024 * 1024,
+		Memory:      uint64(memory * 1024 * 1024),
 		Swap:        0,
 		SwapPresent: false,
 		Digest:      config.Data.Digest,

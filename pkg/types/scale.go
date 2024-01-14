@@ -12,8 +12,8 @@ type ScaleMatcher struct {
 	Node string
 	ID   string
 
-	Memory int64
-	Swap   int64
+	Memory uint64
+	Swap   uint64
 	CPU    int64
 }
 
@@ -32,13 +32,13 @@ func NewScaleMatcher(matchers map[string]string) (ScaleMatcher, error) {
 			if err != nil {
 				return matcher, fmt.Errorf("error parsing memory size: %s", err)
 			}
-			matcher.Memory = int64(bytes.Bytes())
+			matcher.Memory = uint64(bytes)
 		} else if matcherKey == "swap" {
 			bytes, err := datasize.Parse([]byte(matcherValue))
 			if err != nil {
 				return matcher, fmt.Errorf("error parsing swap size: %s", err)
 			}
-			matcher.Swap = int64(bytes.Bytes())
+			matcher.Swap = uint64(bytes)
 		} else if matcherKey == "cpu" {
 			cores, err := strconv.ParseInt(matcherValue, 10, 64)
 			if err != nil {

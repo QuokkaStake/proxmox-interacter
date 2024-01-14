@@ -26,13 +26,13 @@ type Node struct {
 	Uptime int64  `json:"uptime"`
 	Status string `json:"status"`
 
-	Memory int64   `json:"mem"`
 	CPU    float64 `json:"cpu"`
-	Disk   int64   `json:"disk"`
+	Memory uint64  `json:"mem"`
+	Disk   uint64  `json:"disk"`
 
-	MaxCPU    int64 `json:"maxcpu"`
-	MaxMemory int64 `json:"maxmem"`
-	MaxDisk   int64 `json:"maxdisk"`
+	MaxCPU    int64  `json:"maxcpu"`
+	MaxMemory uint64 `json:"maxmem"`
+	MaxDisk   uint64 `json:"maxdisk"`
 
 	Link Link `json:"-"`
 }

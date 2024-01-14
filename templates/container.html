@@ -4,7 +4,7 @@
 <strong>Name: </strong> {{ SerializeLink .Container.Link }}
 <strong>Type: </strong> {{ .Container.GetTypeEmoji }} {{ .Container.GetType }}
 <strong>Status: </strong> {{ .Container.GetEmoji }} {{ .Container.Status }}
-<strong>Located at: </strong> {{ .Container.Node }}
+<strong>Located at: </strong> {{ SerializeLink .Container.NodeLink }}
 
 <strong>Max CPU</strong>: {{ .Container.MaxCPU }}
 <strong>Max RAM</strong>: {{ FormatSize .Container.MaxMemory }}

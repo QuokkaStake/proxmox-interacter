@@ -35,19 +35,20 @@ type Container struct {
 	Uptime int64  `json:"uptime"`
 	Status string `json:"status"`
 
-	MaxCPU    int64 `json:"maxcpu"`
-	MaxMemory int64 `json:"maxmem"`
-	MaxDisk   int64 `json:"maxdisk"`
+	MaxCPU    int64  `json:"maxcpu"`
+	MaxMemory uint64 `json:"maxmem"`
+	MaxDisk   uint64 `json:"maxdisk"`
 
 	NetIn     int64   `json:"netin"`
 	NetOut    int64   `json:"netout"`
 	DiskRead  int64   `json:"diskread"`
 	DiskWrite int64   `json:"diskwrite"`
-	Disk      int64   `json:"disk"`
-	Memory    int64   `json:"mem"`
+	Disk      uint64  `json:"disk"`
+	Memory    uint64  `json:"mem"`
 	CPU       float64 `json:"cpu"`
 
-	Link Link `json:"-"`
+	Link     Link `json:"-"`
+	NodeLink Link `json:"-"`
 }
 
 func (c Container) GetID() string   { return c.ID }
