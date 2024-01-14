@@ -28,10 +28,11 @@ type Storage struct {
 	Status     string `json:"status"`
 	PluginType string `json:"plugintype"`
 
-	MaxDisk int64 `json:"maxdisk"`
-	Disk    int64 `json:"disk"`
+	MaxDisk uint64 `json:"maxdisk"`
+	Disk    uint64 `json:"disk"`
 
-	Link Link `json:"-"`
+	Link     Link `json:"-"`
+	NodeLink Link `json:"-"`
 }
 
 func (s Storage) GetID() string   { return s.ID }

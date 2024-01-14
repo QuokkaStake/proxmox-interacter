@@ -5,15 +5,11 @@ import (
 	"html/template"
 	"main/pkg/types"
 	"math"
-	"regexp"
 	"strings"
 	"time"
-)
 
-func NormalizeString(input string) string {
-	reg := regexp.MustCompile("[^a-zA-Z0-9]+")
-	return strings.ToLower(reg.ReplaceAllString(input, ""))
-}
+	"github.com/c2h5oh/datasize"
+)
 
 func Filter[T any](slice []T, f func(T) bool) []T {
 	var n []T
@@ -23,43 +19,6 @@ func Filter[T any](slice []T, f func(T) bool) []T {
 		}
 	}
 	return n
-}
-
-func Find[T any](slice []T, f func(T) bool) (*T, bool) {
-	for _, e := range slice {
-		if f(e) {
-			return &e, true
-		}
-	}
-	return nil, false
-}
-
-func Map[T, V any](slice []T, f func(T) V) []V {
-	n := make([]V, len(slice))
-	for index, e := range slice {
-		n[index] = f(e)
-	}
-	return n
-}
-
-func SerializeQueryString(qs map[string]string) string {
-	tmp := make([]string, len(qs))
-	counter := 0
-
-	for key, value := range qs {
-		tmp[counter] = key + "=" + value
-		counter++
-	}
-
-	return strings.Join(tmp, "&")
-}
-
-func MergeMaps(first, second map[string]string) map[string]string {
-	for key, value := range second {
-		first[key] = value
-	}
-
-	return first
 }
 
 func SerializeLink(link types.Link) template.HTML {
@@ -78,26 +37,8 @@ func IntToBool(value int) bool {
 	return value != 0
 }
 
-func FormatSize(size int64) string {
-	sizeFloat := float64(size)
-
-	if size > 1024*1024*1024*1024 {
-		return fmt.Sprintf("%.2f TB", sizeFloat/1024/1024/1024/1024)
-	}
-
-	if size > 1024*1024*1024 {
-		return fmt.Sprintf("%.2f GB", sizeFloat/1024/1024/1024)
-	}
-
-	if size > 1024*1024 {
-		return fmt.Sprintf("%.2f MB", sizeFloat/1024/1024)
-	}
-
-	if size > 1024 {
-		return fmt.Sprintf("%.2f KB", sizeFloat/1024)
-	}
-
-	return fmt.Sprintf("%.2f B", sizeFloat)
+func FormatSize(size uint64) string {
+	return datasize.ByteSize(size).HumanReadable()
 }
 
 func FormatBool(value bool) string {

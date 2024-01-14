@@ -43,8 +43,8 @@ type ProxmoxLxcConfigResponse struct {
 		Arch         string `json:"arch"`
 		Hostname     string `json:"hostname"`
 		OnBoot       int    `json:"onboot"`
-		Memory       int64  `json:"memory"`
-		Swap         int64  `json:"swap"`
+		Memory       uint64 `json:"memory"`
+		Swap         uint64 `json:"swap"`
 		Unprivileged int    `json:"unprivileged"`
 		Net0         string `json:"net0"`
 		RootFS       string `json:"rootfs"`
