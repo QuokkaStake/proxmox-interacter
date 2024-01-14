@@ -38,7 +38,7 @@ func NewScaleMatcher(matchers map[string]string) (ScaleMatcher, error) {
 			if err != nil {
 				return matcher, fmt.Errorf("error parsing swap size: %s", err)
 			}
-			matcher.Swap = int64(bytes.MBytes())
+			matcher.Swap = int64(bytes.Bytes())
 		} else if matcherKey == "cpu" {
 			cores, err := strconv.ParseInt(matcherValue, 10, 64)
 			if err != nil {
@@ -70,6 +70,14 @@ func (s ScaleMatcher) MemoryChanged(c Container) bool {
 	}
 
 	return s.Memory != c.MaxMemory
+}
+
+func (s ScaleMatcher) SwapChanged(config *ContainerConfig) bool {
+	if s.Swap == 0 || !config.SwapPresent {
+		return false
+	}
+
+	return s.Swap != config.Swap
 }
 
 func (s ScaleMatcher) AnythingChanged(c Container) bool {
