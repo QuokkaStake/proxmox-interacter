@@ -2,12 +2,13 @@ package utils
 
 import (
 	"fmt"
-	"github.com/c2h5oh/datasize"
 	"html/template"
 	"main/pkg/types"
 	"math"
 	"strings"
 	"time"
+
+	"github.com/c2h5oh/datasize"
 )
 
 func Filter[T any](slice []T, f func(T) bool) []T {

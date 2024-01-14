@@ -3,9 +3,10 @@ package proxmox
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/c2h5oh/datasize"
 	"main/pkg/types"
 	"main/pkg/utils"
+
+	"github.com/c2h5oh/datasize"
 )
 
 func (c *Client) ParseContainersFromResponse(response *types.ProxmoxStatusResponse) ([]types.Container, error) {
