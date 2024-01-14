@@ -3,7 +3,11 @@ package proxmox
 import (
 	"fmt"
 	"main/pkg/types"
+	"net/url"
+	"strconv"
 	"sync"
+
+	"github.com/c2h5oh/datasize"
 
 	"github.com/rs/zerolog"
 )
@@ -136,4 +140,49 @@ func (m *Manager) GetContainerConfig(container types.Container, clusterName stri
 	}
 
 	return nil, fmt.Errorf("Unsupported container type: %s", container.Type)
+}
+
+func (m *Manager) ScaleContainer(
+	clusterName string,
+	container types.Container,
+	config *types.ContainerConfig,
+	scaleInfo types.ScaleMatcher,
+) error {
+	if container.Type != "lxc" && scaleInfo.SwapChanged(config) {
+		return fmt.Errorf("Cannot change swap for VM type '%s'", container.Type)
+	}
+
+	client, found := m.findClientByName(clusterName)
+	if !found {
+		return fmt.Errorf("Cluster is not found!")
+	}
+
+	values := &url.Values{}
+	values.Add("digest", config.Digest)
+	if scaleInfo.CPUChanged(container) {
+		values.Add("cores", strconv.FormatInt(scaleInfo.CPU, 10))
+	}
+	if scaleInfo.MemoryChanged(container) {
+		values.Add("memory", fmt.Sprintf(
+			"%.0f",
+			datasize.ByteSize(scaleInfo.Memory).MBytes(),
+		))
+	}
+	if scaleInfo.SwapChanged(config) {
+		values.Add("swap", fmt.Sprintf(
+			"%.0f",
+			datasize.ByteSize(scaleInfo.Swap).MBytes(),
+		))
+	}
+
+	result, err := client.ScaleContainer(container, values)
+	if err != nil {
+		return err
+	}
+
+	if result.Success != 1 {
+		return fmt.Errorf("got error from Proxmox: %s", result.Message)
+	}
+
+	return nil
 }

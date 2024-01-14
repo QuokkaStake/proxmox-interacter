@@ -12,7 +12,7 @@
 {{- if .Config }}
 {{- if .Config.SwapPresent }}
 <strong>Swap:</strong> {{ FormatSize .Config.Swap }}
-{{ end -}}
+{{ end }}
 <strong>Start at boot:</strong> {{ FormatBool .Config.OnBoot }}
 {{ end -}}
 {{- if .Container.IsRunning }}

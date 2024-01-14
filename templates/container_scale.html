@@ -2,7 +2,7 @@ Going to scale the following container:
 - Name: {{ SerializeLink .Container.Link }}
 - Node: {{ .Container.Node }}
 
-{{ if not (.ScaleParams.AnythingChanged .Container) -}}
+{{ if not (.ScaleParams.AnythingChanged .Container .Config) -}}
 Nothing to scale.
 {{ else -}}
 Scaling the following params:

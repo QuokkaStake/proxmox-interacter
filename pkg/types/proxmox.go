@@ -15,6 +15,11 @@ type ProxmoxActionResponse struct {
 	Message string `json:"message"`
 }
 
+type ProxmoxScaleResponse struct {
+	Success int    `json:"success"`
+	Message string `json:"message"`
+}
+
 /*
 LXC:
 {

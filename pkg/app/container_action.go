@@ -94,8 +94,12 @@ func (a *App) HandleContainerAction(actionName string) func(c tele.Context) erro
 
 		menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 
-		approveButton := menu.Data("✅Approve", fmt.Sprintf("%s%s", action.actionPrefix, args[0]))
-		cancelButton := menu.Data("❌Cancel", fmt.Sprintf("%s%s", action.cancelActionPrefix, args[0]))
+		approveButton := menu.Data("✅Approve", fmt.Sprintf(
+			"%s%s",
+			action.actionPrefix,
+			args[0],
+		))
+		cancelButton := menu.Data("❌Cancel", action.cancelActionPrefix)
 
 		menu.Inline(
 			menu.Row(approveButton, cancelButton),
